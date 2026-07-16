@@ -1,0 +1,34 @@
+{
+  "name": "fluxzero",
+  "version": "0.1.0+codex.20260716120035",
+  "description": "Build Fluxzero applications with current SDK guidance from the Fluxzero MCP server.",
+  "author": {
+    "name": "Fluxzero",
+    "url": "https://fluxzero.io"
+  },
+  "homepage": "https://fluxzero.io",
+  "repository": "https://github.com/fluxzero-io/fluxzero-codex-plugin",
+  "license": "Apache-2.0",
+  "keywords": [
+    "fluxzero",
+    "java",
+    "kotlin",
+    "application-development"
+  ],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "Fluxzero",
+    "shortDescription": "Build Fluxzero apps from product briefs.",
+    "longDescription": "Fluxzero gives Codex a project-generation workflow and current MCP documentation for creating idiomatic Java and Kotlin applications.",
+    "developerName": "Fluxzero",
+    "category": "Productivity",
+    "capabilities": [
+      "Application development",
+      "MCP documentation"
+    ],
+    "defaultPrompt": [
+      "Build this application with Fluxzero."
+    ]
+  }
+}

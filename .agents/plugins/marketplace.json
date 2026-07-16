@@ -1,0 +1,20 @@
+{
+  "name": "fluxzero",
+  "interface": {
+    "displayName": "Fluxzero"
+  },
+  "plugins": [
+    {
+      "name": "fluxzero",
+      "source": {
+        "source": "local",
+        "path": "./plugins/fluxzero"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}
