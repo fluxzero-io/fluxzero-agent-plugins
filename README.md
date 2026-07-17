@@ -62,3 +62,7 @@ Validate the manifest and skill with the official Codex plugin and skill
 validators, then test the marketplace install in an isolated `CODEX_HOME`. The
 plugin must remain self-contained: one skill, one MCP configuration, and no
 project-local installation side effects.
+
+## License
+
+Licensed under the Apache License 2.0. See [LICENSE](LICENSE).
