@@ -1,0 +1,26 @@
+{
+  "name": "fluxzero",
+  "displayName": "Fluxzero",
+  "version": "0.2.0",
+  "description": "Build and extend Fluxzero applications with current SDK guidance from the Fluxzero MCP server.",
+  "author": {
+    "name": "Fluxzero"
+  },
+  "homepage": "https://fluxzero.io",
+  "repository": "https://github.com/fluxzero-io/fluxzero-agent-integrations",
+  "license": "Apache-2.0",
+  "keywords": [
+    "fluxzero",
+    "java",
+    "kotlin",
+    "application-development"
+  ],
+  "category": "developer-tools",
+  "tags": [
+    "framework",
+    "java",
+    "kotlin"
+  ],
+  "skills": "./skills/",
+  "mcpServers": "./mcp.json"
+}

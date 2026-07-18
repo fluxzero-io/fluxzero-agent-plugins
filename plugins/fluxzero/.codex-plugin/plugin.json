@@ -1,13 +1,13 @@
 {
   "name": "fluxzero",
-  "version": "0.1.0+codex.20260718140818",
+  "version": "0.2.0",
   "description": "Build and extend Fluxzero applications with current SDK guidance from the Fluxzero MCP server.",
   "author": {
     "name": "Fluxzero",
     "url": "https://fluxzero.io"
   },
   "homepage": "https://fluxzero.io",
-  "repository": "https://github.com/fluxzero-io/fluxzero-codex-plugin",
+  "repository": "https://github.com/fluxzero-io/fluxzero-agent-integrations",
   "license": "Apache-2.0",
   "keywords": [
     "fluxzero",

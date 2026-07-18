@@ -1,67 +1,113 @@
-# Fluxzero Codex Plugin
+# Fluxzero Agent Integrations
 
-This repository contains the installable Codex plugin for building and extending
-Fluxzero applications. Installing it once gives Codex both the application-building
-workflow and the current Fluxzero MCP documentation; projects do not need local
-Fluxzero agent manuals or their own MCP registration.
+This repository distributes one Fluxzero application-building skill and the
+production Fluxzero MCP documentation server to Codex, Claude Code, Cursor,
+Gemini CLI, and GitHub Copilot. Install the adapter for your coding agent once;
+projects do not need local Fluxzero manuals or a duplicate MCP registration.
 
-The plugin bundles:
+Every adapter provides the same workflow:
 
-- a `build-fluxzero-app` skill that makes Fluxzero the required application
-  architecture for greenfield app-building tasks
-- a Fluxzero MCP server configuration so Codex can retrieve current guidance
-- a repo-local plugin marketplace at `.agents/plugins/marketplace.json`
+- use the Fluxzero CLI and a Java or Kotlin starter for a new, empty project
+- preserve the build and layout of an existing project
+- compare its SDK with the version advertised by the MCP documentation
+- retrieve focused framework guidance instead of reading the whole graph
+- implement and test a real Fluxzero application rather than a generic service
 
 ## Install
 
-Add this repository as a marketplace and install the plugin:
+### Codex
 
 ```bash
-codex plugin marketplace add fluxzero-io/fluxzero-codex-plugin
+codex plugin marketplace add fluxzero-io/fluxzero-agent-integrations
 codex plugin add fluxzero@fluxzero
 ```
 
-Both commands are safe to repeat. Start a new Codex task after installing or
-updating so that task loads the plugin's skill and MCP tools.
+Start a new Codex task after installation or update.
 
-### Let a coding agent install it
+### Claude Code
 
-Give a Codex agent these lines:
+```bash
+claude plugin marketplace add fluxzero-io/fluxzero-agent-integrations
+claude plugin install fluxzero@fluxzero
+```
+
+Run `/reload-plugins` or start a new Claude Code session.
+
+### Cursor
+
+The repository contains a Cursor marketplace and plugin manifest ready for
+Cursor Marketplace publication. Once listed, install it in Cursor with:
 
 ```text
-Install the Fluxzero Codex plugin by running:
-codex plugin marketplace add fluxzero-io/fluxzero-codex-plugin
-codex plugin add fluxzero@fluxzero
-Then stop and tell me to start a new Codex task so the plugin is loaded.
+/add-plugin fluxzero
 ```
 
-The new task can contain only the product request. For a new project, Codex will
-install the Fluxzero CLI when necessary, generate the selected Java or Kotlin
-starter in an empty target, and adapt it to the request. For an existing project,
-open that repository and ask for the change: the plugin preserves its build and
-layout, reads its Fluxzero version, and does not scaffold over it.
+For local verification before marketplace approval, copy
+`adapters/cursor/fluxzero` to `~/.cursor/plugins/local/fluxzero` and reload
+Cursor.
 
-## Update
-
-Refresh the marketplace snapshot, reinstall the current plugin bundle, and then
-start a new task:
+### Gemini CLI
 
 ```bash
-codex plugin marketplace upgrade fluxzero
-codex plugin add fluxzero@fluxzero
+gemini extensions install https://github.com/fluxzero-io/fluxzero-agent-integrations --consent
 ```
 
-For local development, replace the marketplace source with `.`. The marketplace
-name remains `fluxzero`, so a project should not bundle another copy of the
-plugin or register the same MCP server separately. Local manuals are deliberately
-not part of the setup.
+Restart Gemini CLI after installation or update.
 
-## Development verification
+### GitHub Copilot CLI
 
-Validate the manifest and skill with the official Codex plugin and skill
-validators, then test the marketplace install in an isolated `CODEX_HOME`. The
-plugin must remain self-contained: one skill, one MCP configuration, and no
-project-local installation side effects.
+```bash
+copilot plugin marketplace add fluxzero-io/fluxzero-agent-integrations
+copilot plugin install fluxzero@fluxzero
+```
+
+Start a new Copilot CLI session after installation or update. The same plugin
+components are also available to Copilot app clients that use CLI plugins.
+
+### Let the current coding agent install its adapter
+
+This minimal prompt is intentionally agent-neutral:
+
+```text
+Install the Fluxzero integration for the coding agent you are running from the repository fluxzero-io/fluxzero-agent-integrations. Then stop and tell me how to reload or restart so the integration is available.
+```
+
+Installation modifies agent-level configuration. A coding task should resume
+only after the agent has reloaded the new skill and MCP server.
+
+## Generated project instructions
+
+The files in `project-instructions/` are the source for new Fluxzero projects:
+
+- `AGENTS.md` contains the short, agent-neutral invariant used by Codex,
+  Cursor, and GitHub Copilot.
+- `CLAUDE.md` imports `AGENTS.md` and adds only the Claude installation and
+  reload command.
+- `GEMINI.md` imports `AGENTS.md` and adds only the Gemini installation and
+  restart command.
+
+This avoids maintaining full, divergent manuals per agent while respecting
+their different instruction-file discovery rules. An unavailable integration
+is a bootstrap boundary, not permission to implement from stale local docs.
+
+## Repository layout
+
+`skills/build-fluxzero-app/SKILL.md` is the canonical skill and the Gemini CLI
+copy. `npm run generate` renders byte-identical skill copies into four thin,
+self-contained adapters, plus their manifests, transport-specific MCP
+configurations, and marketplace catalogs. Keeping the adapter directories
+separate prevents one agent from auto-discovering another agent's incompatible
+MCP settings. CI rejects generated drift and symlinks.
+
+## Development
+
+```bash
+npm run generate
+npm test
+```
+
+The generators have no third-party runtime dependencies. Validate agent-native
+install flows in isolated home directories before publishing a release.
 
 ## License
 

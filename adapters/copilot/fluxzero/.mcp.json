@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "fluxzero": {
+      "type": "http",
+      "url": "https://api.dashboard.fluxzero.io/mcp",
+      "tools": [
+        "*"
+      ],
+      "deferTools": "auto"
+    }
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "mcpServers": {
+    "fluxzero": {
+      "url": "https://api.dashboard.fluxzero.io/mcp"
+    }
+  }
+}
