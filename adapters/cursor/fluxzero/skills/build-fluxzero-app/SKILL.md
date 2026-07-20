@@ -73,12 +73,14 @@ For each implementation iteration:
    events, advance to its returned cursor, and wait again while work relevant to
    the edit is still in progress. Do not stop merely because the first
    `source-changed` or `compile-started` event arrived.
-4. For a backend change, wait through compile/reload and then read
-   `get_test_status` for its causally newer `passed`, `failed`, or `skipped`
-   decision. The latest run includes its selectors and reason; an old green run
-   is history, not evidence for the new edit. For a frontend-only change, follow
-   the delegated frontend events and service state; do not require unrelated
-   backend tests.
+4. For a backend change, wait through compile/reload and continue from the
+   pre-edit cursor until a `source: test`, `stream: lifecycle` event reaches
+   `passed` or `failed`. Corroborate it with `get_test_status.tests`. That tool
+   exposes current service state, not a per-edit run record; an old green state
+   is history, not evidence for the new edit. A change outside the backend test
+   scope may start no test run and leave the prior status unchanged. For a
+   frontend-only change, follow the delegated frontend events and service state;
+   do not require unrelated backend tests.
 5. On a terminal failure or degraded service, inspect `get_active_problems`,
    then `get_test_status`, then only the bounded log slice needed for diagnosis.
    Fix the reported cause and repeat from a fresh status cursor.
@@ -125,10 +127,11 @@ release/CI-equivalent verification.
 
 ## Before Finishing
 
-Finish only after the cursored event loop reaches stable service states, the
-appropriate current test decision is successful or explicitly skipped, and the
-active-problem list is empty. If structured verification is unavailable, state
-why and run the appropriate project wrapper once as the fallback.
+Finish only after the cursored event loop reaches stable service states, every
+test run caused by the edit has passed, and the active-problem list is empty. If
+the edit legitimately causes no test run, do not reuse a historical green state
+as evidence. If structured verification is unavailable, state why and run the
+appropriate project wrapper once as the fallback.
 
 If the result is not recognizably Fluxzero, repair it before answering. Do not
 present a generic app as complete.
