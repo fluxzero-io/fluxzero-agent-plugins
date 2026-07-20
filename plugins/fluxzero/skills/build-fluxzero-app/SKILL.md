@@ -23,8 +23,8 @@ business behavior.
      Fluxzero incrementally using the project-setup docs. Do not replace the
      project with a generated starter unless the user explicitly requests a
      separate replacement application.
-2. Use the bundled Fluxzero MCP docs before making framework-level decisions.
-   Start with the docs root/start tool when it is available.
+2. Use the bundled `fluxzero-docs` MCP server before making framework-level
+   decisions. Start with the docs root/start tool when it is available.
 3. Treat a successfully read documentation article as stable for this task.
    Remember its URL and reuse its guidance instead of rereading it. Reread only
    after an incomplete response, context loss, or a changed checkpoint/content
@@ -54,6 +54,42 @@ business behavior.
 10. If neither a Fluxzero project nor Fluxzero docs are available, stop and
    explain the setup problem. Do not continue by inventing a non-Fluxzero app.
 
+## Development Feedback Loop
+
+Use the bundled `fluxzero-dev` MCP server as the owner of the local development
+environment. Its `fz mcp --ensure-dev` transport starts one background
+environment when needed and reuses the active project session.
+
+The active dev environment exclusively owns source watching, compilation,
+application and local support-service replacement, configured startup commands,
+and background test execution. Do not start a second build, test process,
+application, watcher, or unbounded log follower in parallel with it.
+
+For each implementation iteration:
+
+1. Call `get_status` and remember its session ID and cursor before editing.
+2. Make one coherent source or test change.
+3. Call `wait_for_change` with that cursor. Inspect the returned structured
+   events, advance to its returned cursor, and wait again while work relevant to
+   the edit is still in progress. Do not stop merely because the first
+   `source-changed` or `compile-started` event arrived.
+4. For a backend change, wait through compile/reload and then read
+   `get_test_status` for its causally newer `passed`, `failed`, or `skipped`
+   decision. The latest run includes its selectors and reason; an old green run
+   is history, not evidence for the new edit. For a frontend-only change, follow
+   the delegated frontend events and service state; do not require unrelated
+   backend tests.
+5. On a terminal failure or degraded service, inspect `get_active_problems`,
+   then `get_test_status`, then only the bounded log slice needed for diagnosis.
+   Fix the reported cause and repeat from a fresh status cursor.
+
+If the dev MCP was started before a new project had a supported build, generate
+the project first and reconnect to it. Direct wrapper commands are a fallback,
+not the normal agent loop. Use them only when the dev environment is unavailable
+or explicitly reports that verification is unmanaged, for a build/dependency
+change outside its configured scope, or when the user specifically requests a
+release/CI-equivalent verification.
+
 ## Implementation Rules
 
 - Model business behavior with Fluxzero concepts: commands, aggregates,
@@ -69,8 +105,9 @@ business behavior.
   the authenticated actor.
 - Use Fluxzero's built-in event log/audit behavior instead of adding a separate
   audit trail unless the user explicitly asks for one.
-- Prefer the project's build wrapper. A Maven project should keep `./mvnw` and
-  pass `./mvnw test`.
+- Keep the project's build wrapper for CI, releases, and explicit fallback
+  verification. During an active dev session, let the dev server invoke it and
+  consume the structured result through `fluxzero-dev`.
 - Make front-end actions discoverable through Fluxzero-supported endpoint or
   action-discovery mechanisms from the docs.
 
@@ -88,13 +125,10 @@ business behavior.
 
 ## Before Finishing
 
-Run the wrapper selected during project generation:
-
-```bash
-./mvnw test
-# or
-./gradlew test
-```
+Finish only after the cursored event loop reaches stable service states, the
+appropriate current test decision is successful or explicitly skipped, and the
+active-problem list is empty. If structured verification is unavailable, state
+why and run the appropriate project wrapper once as the fallback.
 
 If the result is not recognizably Fluxzero, repair it before answering. Do not
 present a generic app as complete.

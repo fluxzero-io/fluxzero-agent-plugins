@@ -6,7 +6,7 @@ import process from "node:process";
 import { fileURLToPath } from "node:url";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const config = JSON.parse(await readFile(path.join(root, "integration.config.json"), "utf8"));
+const config = JSON.parse(await readFile(path.join(root, "plugins.config.json"), "utf8"));
 const skill = await readFile(path.join(root, "skills/build-fluxzero-app/SKILL.md"), "utf8");
 const adapterPaths = {
   codex: "./plugins/fluxzero",
@@ -30,6 +30,11 @@ const commonManifest = {
   keywords: config.keywords,
 };
 
+const devMcp = {
+  command: config.devMcpCommand,
+  args: config.devMcpArgs,
+};
+
 const outputs = new Map([
   ["plugins/fluxzero/skills/build-fluxzero-app/SKILL.md", skill],
   ["adapters/claude/fluxzero/skills/build-fluxzero-app/SKILL.md", skill],
@@ -45,10 +50,10 @@ const outputs = new Map([
         displayName: config.displayName,
         shortDescription: "Build and extend Fluxzero applications.",
         longDescription:
-          "Fluxzero gives Codex a safe workflow for new and existing Java or Kotlin projects plus current, selectively retrieved MCP documentation.",
+          "Fluxzero gives Codex a safe workflow for new and existing Java or Kotlin projects, current selectively retrieved documentation, and structured local development feedback.",
         developerName: config.author.name,
         category: "Productivity",
-        capabilities: ["Application development", "MCP documentation"],
+        capabilities: ["Application development", "MCP documentation", "Automated development feedback"],
         defaultPrompt: [
           "Build a new Fluxzero application from this brief.",
           "Extend this existing Fluxzero application.",
@@ -98,11 +103,18 @@ const outputs = new Map([
     "plugins/fluxzero/.mcp.json",
     json({
       mcpServers: {
-        fluxzero: {
+        "fluxzero-docs": {
           url: config.mcpUrl,
           required: true,
           startup_timeout_sec: 10,
           tool_timeout_sec: 60,
+          default_tools_approval_mode: "approve",
+        },
+        "fluxzero-dev": {
+          ...devMcp,
+          required: false,
+          startup_timeout_sec: 120,
+          tool_timeout_sec: 120,
           default_tools_approval_mode: "approve",
         },
       },
@@ -112,9 +124,13 @@ const outputs = new Map([
     "adapters/claude/fluxzero/.mcp.json",
     json({
       mcpServers: {
-        fluxzero: {
+        "fluxzero-docs": {
           type: "http",
           url: config.mcpUrl,
+        },
+        "fluxzero-dev": {
+          type: "stdio",
+          ...devMcp,
         },
       },
     }),
@@ -123,9 +139,10 @@ const outputs = new Map([
     "adapters/cursor/fluxzero/mcp.json",
     json({
       mcpServers: {
-        fluxzero: {
+        "fluxzero-docs": {
           url: config.mcpUrl,
         },
+        "fluxzero-dev": devMcp,
       },
     }),
   ],
@@ -133,11 +150,18 @@ const outputs = new Map([
     "adapters/copilot/fluxzero/.mcp.json",
     json({
       mcpServers: {
-        fluxzero: {
+        "fluxzero-docs": {
           type: "http",
           url: config.mcpUrl,
           tools: ["*"],
           deferTools: "auto",
+        },
+        "fluxzero-dev": {
+          type: "stdio",
+          ...devMcp,
+          tools: ["*"],
+          deferTools: "auto",
+          timeout: 120000,
         },
       },
     }),
@@ -163,7 +187,7 @@ const outputs = new Map([
       name: config.name,
       owner: { name: config.author.name },
       metadata: {
-        description: "Fluxzero integrations for coding agents.",
+        description: "Fluxzero plugins for coding agents.",
         version: config.version,
       },
       plugins: [
@@ -188,7 +212,7 @@ const outputs = new Map([
       name: config.name,
       owner: { name: config.author.name },
       metadata: {
-        description: "Fluxzero integrations for coding agents.",
+        description: "Fluxzero plugins for coding agents.",
         pluginRoot: "adapters/cursor",
       },
       plugins: [
@@ -206,7 +230,7 @@ const outputs = new Map([
       name: config.name,
       owner: { name: config.author.name },
       metadata: {
-        description: "Fluxzero integrations for coding agents.",
+        description: "Fluxzero plugins for coding agents.",
         version: config.version,
       },
       plugins: [
@@ -233,9 +257,13 @@ const outputs = new Map([
       version: config.version,
       description: config.description,
       mcpServers: {
-        fluxzero: {
+        "fluxzero-docs": {
           httpUrl: config.mcpUrl,
           timeout: 60000,
+        },
+        "fluxzero-dev": {
+          ...devMcp,
+          timeout: 120000,
         },
       },
     }),
@@ -265,9 +293,9 @@ for (const [relativePath, expected] of outputs) {
 }
 
 if (drift.length > 0) {
-  console.error("Generated integration files are stale:");
+  console.error("Generated plugin files are stale:");
   for (const item of drift) console.error(`- ${item}`);
   process.exitCode = 1;
 } else {
-  console.log(check ? "Generated integration files are current." : `Generated ${outputs.size} integration files.`);
+  console.log(check ? "Generated plugin files are current." : `Generated ${outputs.size} plugin files.`);
 }

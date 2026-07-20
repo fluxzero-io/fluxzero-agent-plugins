@@ -10,7 +10,7 @@ const execFileAsync = promisify(execFile);
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 test("generated adapters are current", async () => {
-  const { stdout } = await execFileAsync(process.execPath, ["scripts/generate-integrations.mjs", "--check"], { cwd: root });
+  const { stdout } = await execFileAsync(process.execPath, ["scripts/generate-plugins.mjs", "--check"], { cwd: root });
   assert.match(stdout, /current/);
 });
 
@@ -27,8 +27,8 @@ test("every packaged agent receives the exact canonical skill", async () => {
   }
 });
 
-test("all MCP adapters target the same production endpoint", async () => {
-  const config = JSON.parse(await readFile(path.join(root, "integration.config.json"), "utf8"));
+test("all adapters expose separate documentation and development MCP servers", async () => {
+  const config = JSON.parse(await readFile(path.join(root, "plugins.config.json"), "utf8"));
   const paths = [
     "plugins/fluxzero/.mcp.json",
     "adapters/claude/fluxzero/.mcp.json",
@@ -37,8 +37,12 @@ test("all MCP adapters target the same production endpoint", async () => {
   ];
   for (const mcpPath of paths) {
     const value = JSON.parse(await readFile(path.join(root, mcpPath), "utf8"));
-    assert.equal(value.mcpServers.fluxzero.url, config.mcpUrl);
+    assert.equal(value.mcpServers["fluxzero-docs"].url, config.mcpUrl);
+    assert.equal(value.mcpServers["fluxzero-dev"].command, config.devMcpCommand);
+    assert.deepEqual(value.mcpServers["fluxzero-dev"].args, config.devMcpArgs);
   }
   const gemini = JSON.parse(await readFile(path.join(root, "gemini-extension.json"), "utf8"));
-  assert.equal(gemini.mcpServers.fluxzero.httpUrl, config.mcpUrl);
+  assert.equal(gemini.mcpServers["fluxzero-docs"].httpUrl, config.mcpUrl);
+  assert.equal(gemini.mcpServers["fluxzero-dev"].command, config.devMcpCommand);
+  assert.deepEqual(gemini.mcpServers["fluxzero-dev"].args, config.devMcpArgs);
 });

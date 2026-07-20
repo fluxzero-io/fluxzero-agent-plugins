@@ -1,4 +1,4 @@
-name: Validate agent integrations
+name: Validate agent plugins
 
 on:
   pull_request:
