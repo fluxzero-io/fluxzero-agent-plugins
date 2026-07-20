@@ -1,11 +1,19 @@
 {
   "name": "fluxzero",
-  "version": "0.2.0",
-  "description": "Build and extend Fluxzero applications with current SDK guidance from the Fluxzero MCP server.",
+  "version": "0.3.0",
+  "description": "Build and extend Fluxzero applications with current SDK guidance and an automated local development loop.",
   "mcpServers": {
-    "fluxzero": {
+    "fluxzero-docs": {
       "httpUrl": "https://api.dashboard.fluxzero.io/mcp",
       "timeout": 60000
+    },
+    "fluxzero-dev": {
+      "command": "fz",
+      "args": [
+        "mcp",
+        "--ensure-dev"
+      ],
+      "timeout": 120000
     }
   }
 }

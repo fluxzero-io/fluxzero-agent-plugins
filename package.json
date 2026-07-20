@@ -1,12 +1,12 @@
 {
-  "name": "fluxzero-agent-integrations",
-  "version": "0.2.0",
+  "name": "fluxzero-agent-plugins",
+  "version": "0.3.0",
   "private": true,
   "type": "module",
   "scripts": {
-    "generate": "node scripts/generate-integrations.mjs",
-    "check:generated": "node scripts/generate-integrations.mjs --check",
-    "validate": "node scripts/validate-integrations.mjs",
+    "generate": "node scripts/generate-plugins.mjs",
+    "check:generated": "node scripts/generate-plugins.mjs --check",
+    "validate": "node scripts/validate-plugins.mjs",
     "test": "npm run check:generated && npm run validate && node --test scripts/*.test.mjs"
   }
 }

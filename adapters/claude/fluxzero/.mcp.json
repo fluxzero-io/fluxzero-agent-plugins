@@ -1,8 +1,16 @@
 {
   "mcpServers": {
-    "fluxzero": {
+    "fluxzero-docs": {
       "type": "http",
       "url": "https://api.dashboard.fluxzero.io/mcp"
+    },
+    "fluxzero-dev": {
+      "type": "stdio",
+      "command": "fz",
+      "args": [
+        "mcp",
+        "--ensure-dev"
+      ]
     }
   }
 }

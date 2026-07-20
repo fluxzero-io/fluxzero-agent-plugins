@@ -4,21 +4,21 @@
     "name": "Fluxzero"
   },
   "metadata": {
-    "description": "Fluxzero integrations for coding agents.",
-    "version": "0.2.0"
+    "description": "Fluxzero plugins for coding agents.",
+    "version": "0.3.0"
   },
   "plugins": [
     {
       "name": "fluxzero",
       "source": "./adapters/claude/fluxzero",
-      "description": "Build and extend Fluxzero applications with current SDK guidance from the Fluxzero MCP server.",
-      "version": "0.2.0",
+      "description": "Build and extend Fluxzero applications with current SDK guidance and an automated local development loop.",
+      "version": "0.3.0",
       "author": {
         "name": "Fluxzero",
         "url": "https://fluxzero.io"
       },
       "homepage": "https://fluxzero.io",
-      "repository": "https://github.com/fluxzero-io/fluxzero-agent-integrations",
+      "repository": "https://github.com/fluxzero-io/fluxzero-agent-plugins",
       "license": "Apache-2.0",
       "keywords": [
         "fluxzero",
