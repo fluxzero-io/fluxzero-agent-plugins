@@ -127,6 +127,14 @@ npm test
 The generators have no third-party runtime dependencies. Validate agent-native
 install flows in isolated home directories before publishing a release.
 
+## Releases
+
+`plugins.config.json` is the source of the plugin version rendered into every
+agent package. Keep the matching `package.json` version in sync, run
+`npm run generate`, and merge the version change into `main`. After validation
+succeeds, CI creates the corresponding `v<version>` tag and GitHub release.
+Subsequent pushes with the same version leave the existing release unchanged.
+
 ## License
 
 Licensed under the Apache License 2.0. See [LICENSE](LICENSE).

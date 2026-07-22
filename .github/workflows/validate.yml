@@ -17,3 +17,40 @@ jobs:
         with:
           node-version: 22
       - run: npm test
+
+  release:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: validate
+    runs-on: ubuntu-latest
+    concurrency:
+      group: release-agent-plugins
+      cancel-in-progress: false
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Read plugin version
+        id: plugin-version
+        run: |
+          version="$(node -p 'require("./plugins.config.json").version')"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+      - name: Create GitHub release when absent
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.plugin-version.outputs.version }}
+        run: |
+          tag="v${VERSION}"
+          if gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Release $tag already exists; nothing to do."
+            exit 0
+          fi
+          gh release create "$tag" \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$GITHUB_SHA" \
+            --title "Fluxzero Agent Plugins $tag" \
+            --generate-notes
