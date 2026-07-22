@@ -7,6 +7,7 @@ import { fileURLToPath } from "node:url";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const config = await readJson("plugins.config.json");
+const packageJson = await readJson("package.json");
 const failures = [];
 
 function fail(message) {
@@ -34,6 +35,7 @@ function assertEqual(actual, expected, label) {
 if (!/^[0-9]+\.[0-9]+\.[0-9]+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$/.test(config.version)) {
   fail(`plugin version is not semantic: ${config.version}`);
 }
+assertEqual(packageJson.version, config.version, "package and plugin version");
 if (!config.repository.startsWith("https://github.com/fluxzero-io/")) fail("repository must use the Fluxzero GitHub organization");
 if (!config.mcpUrl.startsWith("https://")) fail("MCP URL must use HTTPS");
 assertEqual(config.devMcpCommand, "fz", "development MCP command");
