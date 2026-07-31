@@ -13,6 +13,36 @@ standalone Java app, Spring-only app, Node app, custom HTTP server, custom event
 store, or plain in-memory service is a failed result even if it satisfies some
 business behavior.
 
+## Fluxzero CLI Prerequisite
+
+The bundled `fluxzero-dev` MCP server invokes `fz mcp --ensure-dev`. The
+Fluxzero CLI must therefore be installed and available on the agent process's
+`PATH` before local application work starts. Verify it with:
+
+```bash
+fz version
+```
+
+If `fz` is unavailable, install the latest native CLI for the current system:
+
+- **macOS with Homebrew:**
+  ```bash
+  brew install fluxzero-io/tap/fluxzero
+  ```
+- **Windows with WinGet:**
+  ```powershell
+  winget install --exact --id Fluxzero.FluxzeroCLI
+  ```
+- **Linux or another supported Unix environment:**
+  ```bash
+  curl -sSL https://github.com/fluxzero-io/fluxzero-cli/releases/latest/download/install.sh | sh -s -- --install-path
+  ```
+
+Run `fz version` again after installation. If the current coding-agent process
+does not see the updated `PATH`, tell the user to start a new terminal or agent
+session before continuing. Do not substitute an unrelated development server:
+the packaged MCP configuration deliberately depends on `fz`.
+
 ## Start Here
 
 1. Inspect the workspace before editing and classify it:
@@ -33,8 +63,8 @@ business behavior.
    traversing broad sections. Read focused results first, then follow links only
    for missing detail; do not read the whole graph before implementation.
 5. Only for a new or empty target, follow the MCP project-setup guidance for the
-   chosen build tool and language. Install the latest Fluxzero CLI when `fz` is
-   unavailable, then use `fz init` with the Java or Kotlin starter template.
+   chosen build tool and language, then use `fz init` with the Java or Kotlin
+   starter template.
    Prefer non-interactive flags when the product brief determines the answers.
    Generate into an empty target and never use initialization to repair an
    existing project.

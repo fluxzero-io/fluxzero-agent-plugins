@@ -1,6 +1,6 @@
 {
   "name": "fluxzero",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Build and extend Fluxzero applications with current SDK guidance and an automated local development loop.",
   "mcpServers": {
     "fluxzero-docs": {
