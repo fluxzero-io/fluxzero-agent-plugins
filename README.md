@@ -4,8 +4,8 @@ This repository distributes Fluxzero plugins for Codex, Claude Code, Cursor,
 and GitHub Copilot, plus the equivalent Gemini CLI extension. Every package
 contains the same application-building skill and configures the production
 Fluxzero MCP documentation server and automated local-development server.
-Install the package for your coding agent once; projects do not need local
-Fluxzero manuals or duplicate MCP registrations.
+Install the package for your coding agent once; projects do not need
+hand-maintained Fluxzero manuals or duplicate MCP registrations.
 
 ## Fluxzero CLI prerequisite
 
@@ -39,6 +39,28 @@ curl -sSL https://github.com/fluxzero-io/fluxzero-cli/releases/latest/download/i
 
 Run `fz version` again after installation. Start a new terminal or coding-agent
 session if the current process does not see the updated `PATH`.
+
+## Authoritative guidance
+
+The plugin intentionally stores only stable installation and workflow rules.
+Version-sensitive knowledge stays with the component that owns it:
+
+| Information | Authoritative source |
+|:------------|:---------------------|
+| CLI installation and agent workflow | This plugin |
+| SDK version used by a project | Its effective Maven or Gradle model |
+| Current SDK concepts and APIs | The `fluxzero-docs` MCP server |
+| SDK guidance for the detected project version | CLI-synchronized `.fluxzero/agents` manuals from the matching SDK release |
+| Current CLI commands | `fz --help` |
+| Current dev actions and options | `fz dev --help` |
+| `.fluxzero/dev.yaml` schema and defaults | `fz dev config` |
+| SDK implementation details when manuals are insufficient | The matching release tag in `https://github.com/fluxzero-io/fluxzero-sdk-java`, never `main` |
+
+Agents compare the SDK version advertised by `fluxzero-docs` with the effective
+project version before applying version-sensitive guidance. They inspect
+existing project configuration and command output instead of copying option or
+YAML catalogs into the plugin. When plugin wording and command output differ,
+command output wins.
 
 Every package provides the same workflow:
 
@@ -136,9 +158,11 @@ The files in `project-instructions/` are the source for new Fluxzero projects:
   restart command.
 
 This avoids maintaining full, divergent manuals per agent while respecting
-their different instruction-file discovery rules. An unavailable plugin or
-extension is a bootstrap boundary, not permission to implement from stale local
-docs.
+their different instruction-file discovery rules. SDK-versioned manuals
+synchronized by the Fluxzero CLI remain valid managed project context; agents
+must not replace them with hand-maintained copies. An unavailable plugin or
+extension is a bootstrap boundary, not permission to implement from stale
+unmanaged docs.
 
 ## Repository layout
 

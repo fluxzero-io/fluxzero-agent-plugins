@@ -146,7 +146,9 @@ for (const [label, content] of [
 }
 if (!claudeInstructions.startsWith("@AGENTS.md")) fail("CLAUDE.md must import AGENTS.md");
 if (!geminiInstructions.startsWith("@./AGENTS.md")) fail("GEMINI.md must import AGENTS.md");
-if (!agents.includes("do not add repository-local Fluxzero manuals")) fail("AGENTS.md must reject local manual copies");
+if (!agents.includes("Do not add hand-maintained Fluxzero manuals")) {
+  fail("AGENTS.md must reject hand-maintained manual copies");
+}
 
 async function rejectSymlinks(directory) {
   for (const entry of await readdir(directory, { withFileTypes: true })) {

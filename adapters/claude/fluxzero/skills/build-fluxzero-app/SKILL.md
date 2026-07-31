@@ -43,6 +43,37 @@ does not see the updated `PATH`, tell the user to start a new terminal or agent
 session before continuing. Do not substitute an unrelated development server:
 the packaged MCP configuration deliberately depends on `fz`.
 
+## Authoritative Sources
+
+Use each source only for the information it owns:
+
+- **This plugin:** stable CLI installation, agent workflow, and the division of
+  responsibilities between the documentation and development MCP servers. It
+  deliberately does not catalog evolving SDK, CLI, or dev-server capabilities.
+- **The effective Maven or Gradle model:** the SDK version and build
+  configuration actually used by the project. Never infer or pin an SDK version
+  from this plugin.
+- **`fluxzero-docs`:** current SDK concepts, APIs, and framework guidance.
+  Compare the `sdkVersion` advertised by `docs_start` with the effective project
+  version before applying version-sensitive guidance.
+- **`.fluxzero/agents`:** SDK manuals synchronized from the GitHub release that
+  exactly matches the project's detected SDK version. Use these for
+  version-specific project guidance; do not replace them with hand-maintained
+  copies.
+- **The installed `fz` CLI:** its current commands and the dev-server version it
+  resolves for the project. Run `fz --help` when choosing a command. Run `fz dev --help`
+  for exact development actions and options. Run `fz dev config` before creating
+  or editing `.fluxzero/dev.yaml`.
+- **The [Fluxzero Java SDK repository](https://github.com/fluxzero-io/fluxzero-sdk-java):**
+  implementation-source fallback only when manuals are insufficient. Inspect
+  the release tag matching the effective project SDK version, never `main`, for
+  version-specific conclusions.
+
+Inspect existing project configuration before changing it and preserve its
+intent. Never infer CLI options, `dev.yaml` keys, defaults, or precedence from
+this skill, memory, another project, or a copied example. If this plugin and the
+installed command output ever differ, the command output wins.
+
 ## Start Here
 
 1. Inspect the workspace before editing and classify it:

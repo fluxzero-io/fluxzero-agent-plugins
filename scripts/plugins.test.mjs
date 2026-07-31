@@ -48,6 +48,50 @@ test("canonical instructions document the Fluxzero CLI prerequisite on every pla
   }
 });
 
+test("canonical instructions delegate evolving CLI and dev configuration to installed commands", async () => {
+  const files = [
+    "README.md",
+    "skills/build-fluxzero-app/SKILL.md",
+    "project-instructions/AGENTS.md",
+  ];
+  const authoritativeCommands = [
+    "fz --help",
+    "fz dev --help",
+    "fz dev config",
+  ];
+
+  for (const file of files) {
+    const content = await readFile(path.join(root, file), "utf8");
+    for (const command of authoritativeCommands) {
+      assert.ok(content.includes(command), `${file} must delegate to ${command}`);
+    }
+    assert.match(content, /command output (?:ever )?(?:differ|wins)|command output wins/i);
+  }
+});
+
+test("canonical instructions define the complete version-aware authority map", async () => {
+  const files = [
+    "README.md",
+    "skills/build-fluxzero-app/SKILL.md",
+    "project-instructions/AGENTS.md",
+  ];
+  const requiredSources = [
+    "fluxzero-docs",
+    ".fluxzero/agents",
+    "Maven or Gradle",
+    "https://github.com/fluxzero-io/fluxzero-sdk-java",
+    "release tag",
+  ];
+
+  for (const file of files) {
+    const content = await readFile(path.join(root, file), "utf8");
+    for (const source of requiredSources) {
+      assert.ok(content.includes(source), `${file} must identify ${source} as an authoritative source`);
+    }
+    assert.match(content, /never `main`/);
+  }
+});
+
 test("all adapters expose separate documentation and development MCP servers", async () => {
   const config = JSON.parse(await readFile(path.join(root, "plugins.config.json"), "utf8"));
   const paths = [
