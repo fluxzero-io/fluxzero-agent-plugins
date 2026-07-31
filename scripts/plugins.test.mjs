@@ -27,6 +27,27 @@ test("every packaged agent receives the exact canonical skill", async () => {
   }
 });
 
+test("canonical instructions document the Fluxzero CLI prerequisite on every platform", async () => {
+  const files = [
+    "README.md",
+    "skills/build-fluxzero-app/SKILL.md",
+    "project-instructions/AGENTS.md",
+  ];
+  const requiredInstructions = [
+    "fz version",
+    "brew install fluxzero-io/tap/fluxzero",
+    "winget install --exact --id Fluxzero.FluxzeroCLI",
+    "https://github.com/fluxzero-io/fluxzero-cli/releases/latest/download/install.sh",
+  ];
+
+  for (const file of files) {
+    const content = await readFile(path.join(root, file), "utf8");
+    for (const instruction of requiredInstructions) {
+      assert.ok(content.includes(instruction), `${file} must document ${instruction}`);
+    }
+  }
+});
+
 test("all adapters expose separate documentation and development MCP servers", async () => {
   const config = JSON.parse(await readFile(path.join(root, "plugins.config.json"), "utf8"));
   const paths = [

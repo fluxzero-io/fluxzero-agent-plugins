@@ -7,6 +7,39 @@ Fluxzero MCP documentation server and automated local-development server.
 Install the package for your coding agent once; projects do not need local
 Fluxzero manuals or duplicate MCP registrations.
 
+## Fluxzero CLI prerequisite
+
+The local-development MCP server runs `fz mcp --ensure-dev`, so the Fluxzero
+CLI must be installed and available on the coding agent's `PATH`. Verify this
+before starting application work:
+
+```bash
+fz version
+```
+
+Install the latest native CLI when that command is unavailable:
+
+**macOS with Homebrew:**
+
+```bash
+brew install fluxzero-io/tap/fluxzero
+```
+
+**Windows with WinGet:**
+
+```powershell
+winget install --exact --id Fluxzero.FluxzeroCLI
+```
+
+**Linux or another supported Unix environment:**
+
+```bash
+curl -sSL https://github.com/fluxzero-io/fluxzero-cli/releases/latest/download/install.sh | sh -s -- --install-path
+```
+
+Run `fz version` again after installation. Start a new terminal or coding-agent
+session if the current process does not see the updated `PATH`.
+
 Every package provides the same workflow:
 
 - use the Fluxzero CLI and a Java or Kotlin starter for a new, empty project
