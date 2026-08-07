@@ -69,6 +69,15 @@ test("canonical instructions delegate evolving CLI and dev configuration to inst
   }
 });
 
+test("canonical agent workflow follows startup through the early dev control plane", async () => {
+  const content = await readFile(path.join(root, "skills/build-fluxzero-app/SKILL.md"), "utf8");
+  assert.ok(content.includes("control plane can connect while"));
+  assert.match(content, /call\s+`get_status`\s+immediately/);
+  assert.match(content, /call\s+`get_active_problems`\s+immediately/);
+  assert.match(content, /follow\s+`wait_for_change`/i);
+  assert.match(content, /Do not wait for an MCP startup timeout/);
+});
+
 test("canonical instructions define the complete version-aware authority map", async () => {
   const files = [
     "README.md",

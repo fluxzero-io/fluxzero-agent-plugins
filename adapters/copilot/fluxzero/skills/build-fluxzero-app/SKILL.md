@@ -126,6 +126,15 @@ application and local support-service replacement, configured startup commands,
 and background test execution. Do not start a second build, test process,
 application, watcher, or unbounded log follower in parallel with it.
 
+The MCP control plane can connect while applications, frontends, or support
+services are still starting. On the first connection, call `get_status`
+immediately. If startup is not ready and the status reports a non-zero problem
+count, call `get_active_problems` immediately.
+Follow `wait_for_change` from that status cursor until the environment becomes
+ready or a concrete failure is reported. Do not wait for an MCP startup timeout
+before inspecting progress, and do not start a second dev environment as a
+diagnostic fallback.
+
 For each implementation iteration:
 
 1. Call `get_status` and remember its session ID and cursor before editing.
