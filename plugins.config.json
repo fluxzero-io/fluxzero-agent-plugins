@@ -1,8 +1,8 @@
 {
   "name": "fluxzero",
   "displayName": "Fluxzero",
-  "version": "0.3.2",
-  "description": "Build and extend Fluxzero applications with current SDK guidance and an automated local development loop.",
+  "version": "0.3.3",
+  "description": "Build and extend Fluxzero applications with verified first-time prerequisites, current SDK guidance, and an automated local development loop.",
   "repository": "https://github.com/fluxzero-io/fluxzero-agent-plugins",
   "homepage": "https://fluxzero.io",
   "mcpUrl": "https://api.dashboard.fluxzero.io/mcp",

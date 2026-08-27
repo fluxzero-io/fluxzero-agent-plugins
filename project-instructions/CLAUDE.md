@@ -9,4 +9,6 @@ claude plugin marketplace add fluxzero-io/fluxzero-agent-plugins
 claude plugin install fluxzero@fluxzero
 ```
 
-Then run `/reload-plugins` or start a new Claude Code session before continuing.
+Before reloading, complete the Git, Fluxzero CLI, and Java readiness checks in
+`AGENTS.md`. Then run `/reload-plugins` or start one new Claude Code session and
+verify both Fluxzero MCP servers before continuing.

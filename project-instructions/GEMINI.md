@@ -8,4 +8,6 @@ If the Fluxzero extension is unavailable, run this from a terminal outside the c
 gemini extensions install https://github.com/fluxzero-io/fluxzero-agent-plugins --consent
 ```
 
-Then restart Gemini CLI before continuing.
+Before restarting, complete the Git, Fluxzero CLI, and Java readiness checks in
+`AGENTS.md`. Then restart Gemini CLI once and verify both Fluxzero MCP servers
+before continuing.
