@@ -44,7 +44,7 @@ using a Git-backed marketplace or extension command.
 
 ### Fluxzero CLI prerequisite
 
-The local-development MCP server runs `fz mcp --ensure-dev --allow-empty`, so
+The local-development MCP server runs `fz mcp --ensure-dev`, so
 the Fluxzero CLI must be installed and available on the coding agent's `PATH`.
 Verify this before starting application work:
 
@@ -88,8 +88,8 @@ env -i HOME="$HOME" USER="$USER" LOGNAME="$LOGNAME" SHELL=/bin/zsh \
   /bin/zsh -l -c 'command -v fz && fz version && fz mcp --help && fz init --help'
 ```
 
-The MCP help must list both `--ensure-dev` and `--allow-empty`, and the init
-help must list `--in-place`. These are the command surfaces the plugin uses to
+The MCP help must list `--ensure-dev`, and the init help must list `--in-place`.
+These are the command surfaces the plugin uses to
 keep one dev session alive while a new project is created in its watched root.
 
 macOS GUI applications do not read `.zprofile`. Publish the verified CLI
@@ -165,7 +165,7 @@ Every package provides the same workflow:
 The two servers have deliberately separate names and responsibilities:
 
 - `fluxzero-docs` serves stable framework guidance over HTTP.
-- `fluxzero-dev` runs `fz mcp --ensure-dev --allow-empty` in the current
+- `fluxzero-dev` runs `fz mcp --ensure-dev` in the current
   workspace. It exposes the control plane before a greenfield project exists,
   then reuses the same background environment for current problems, bounded
   logs, test status, and a cursored development event stream.
@@ -246,8 +246,8 @@ restarting the coding agent. Require all of the following evidence:
 
 - the native plugin or extension listing shows Fluxzero installed and enabled
 - `git --version` succeeds
-- the clean login-shell probe above resolves `fz`, `fz mcp --help` lists both
-  `--ensure-dev` and `--allow-empty`, and `fz init --help` lists `--in-place`
+- the clean login-shell probe above resolves `fz`, `fz mcp --help` lists
+  `--ensure-dev`, and `fz init --help` lists `--in-place`
 - `java -version` and `javac -version` both report Java 25 or newer
 - on macOS, `/usr/libexec/java_home -V` finds the JDK and the launchd `PATH`
   bridge includes the directory containing `fz`

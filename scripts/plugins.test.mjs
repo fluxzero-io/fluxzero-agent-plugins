@@ -38,7 +38,6 @@ test("canonical instructions document the complete environment prerequisite on e
     "fz version",
     "fz mcp --help",
     "--ensure-dev",
-    "--allow-empty",
     "fz init --help",
     "--in-place",
     "java -version",
@@ -215,7 +214,7 @@ test("canonical instructions define the complete version-aware authority map", a
 
 test("all adapters expose separate documentation and development MCP servers", async () => {
   const config = JSON.parse(await readFile(path.join(root, "plugins.config.json"), "utf8"));
-  assert.deepEqual(config.devMcpArgs, ["mcp", "--ensure-dev", "--allow-empty"]);
+  assert.deepEqual(config.devMcpArgs, ["mcp", "--ensure-dev"]);
   const paths = [
     "plugins/fluxzero/.mcp.json",
     "adapters/claude/fluxzero/.mcp.json",

@@ -39,7 +39,7 @@ assertEqual(packageJson.version, config.version, "package and plugin version");
 if (!config.repository.startsWith("https://github.com/fluxzero-io/")) fail("repository must use the Fluxzero GitHub organization");
 if (!config.mcpUrl.startsWith("https://")) fail("MCP URL must use HTTPS");
 assertEqual(config.devMcpCommand, "fz", "development MCP command");
-assertEqual(config.devMcpArgs, ["mcp", "--ensure-dev", "--allow-empty"], "development MCP arguments");
+assertEqual(config.devMcpArgs, ["mcp", "--ensure-dev"], "development MCP arguments");
 
 const canonicalSkill = await readFile(path.join(root, "skills/build-fluxzero-app/SKILL.md"), "utf8");
 const skillCopies = [

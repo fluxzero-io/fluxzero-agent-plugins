@@ -9,8 +9,7 @@
   "devMcpCommand": "fz",
   "devMcpArgs": [
     "mcp",
-    "--ensure-dev",
-    "--allow-empty"
+    "--ensure-dev"
   ],
   "author": {
     "name": "Fluxzero",

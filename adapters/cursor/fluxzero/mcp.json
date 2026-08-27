@@ -7,8 +7,7 @@
       "command": "fz",
       "args": [
         "mcp",
-        "--ensure-dev",
-        "--allow-empty"
+        "--ensure-dev"
       ]
     }
   }

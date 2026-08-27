@@ -36,8 +36,7 @@ or JDK install while the Apple dialog is open. After the user returns, repeat
 both checks before requiring `git --version`. On other platforms, require
 `git --version` directly.
 
-The bundled `fluxzero-dev` server invokes
-`fz mcp --ensure-dev --allow-empty`. If `fz version` is unavailable, install the
+The bundled `fluxzero-dev` server invokes `fz mcp --ensure-dev`. If `fz version` is unavailable, install the
 latest native CLI for the current system:
 
 - **macOS or Linux with Homebrew:**
@@ -64,8 +63,8 @@ env -i HOME="$HOME" USER="$USER" LOGNAME="$LOGNAME" SHELL=/bin/zsh \
   /bin/zsh -l -c 'command -v fz && fz version && fz mcp --help && fz init --help'
 ```
 
-Require MCP help to list both `--ensure-dev` and `--allow-empty`, and init help
-to list `--in-place`. On macOS, also ensure that the directory containing `fz`
+Require MCP help to list `--ensure-dev`, and init help to list `--in-place`.
+On macOS, also ensure that the directory containing `fz`
 is present in the launchd `PATH` inherited by a subsequently launched
 coding-agent process. A shell alias or a change visible only in the bootstrap
 shell is insufficient.
@@ -161,7 +160,7 @@ installed command output ever differ, the command output wins.
 ## Development Feedback Loop
 
 Use the bundled `fluxzero-dev` MCP server as the owner of the local development
-environment. Its `fz mcp --ensure-dev --allow-empty` transport exposes the
+environment. Its `fz mcp --ensure-dev` transport exposes the
 control plane before a greenfield project exists, starts one background
 environment when needed, and reuses the active workspace session.
 
