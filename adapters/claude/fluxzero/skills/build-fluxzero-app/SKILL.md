@@ -36,8 +36,9 @@ or JDK install while the Apple dialog is open. After the user returns, repeat
 both checks before requiring `git --version`. On other platforms, require
 `git --version` directly.
 
-The bundled `fluxzero-dev` server invokes `fz mcp --ensure-dev`. If `fz version`
-is unavailable, install the latest native CLI for the current system:
+The bundled `fluxzero-dev` server invokes
+`fz mcp --ensure-dev --allow-empty`. If `fz version` is unavailable, install the
+latest native CLI for the current system:
 
 - **macOS or Linux with Homebrew:**
   ```bash
@@ -60,23 +61,27 @@ resolve the exact development command:
 
 ```bash
 env -i HOME="$HOME" USER="$USER" LOGNAME="$LOGNAME" SHELL=/bin/zsh \
-  /bin/zsh -l -c 'command -v fz && fz version && fz mcp --help'
+  /bin/zsh -l -c 'command -v fz && fz version && fz mcp --help && fz init --help'
 ```
 
-Require the help output to list `--ensure-dev`. On macOS, also ensure that the
-directory containing `fz` is present in the launchd `PATH` inherited by a
-subsequently launched coding-agent process. A shell alias or a change visible
-only in the bootstrap shell is insufficient.
+Require MCP help to list both `--ensure-dev` and `--allow-empty`, and init help
+to list `--in-place`. On macOS, also ensure that the directory containing `fz`
+is present in the launchd `PATH` inherited by a subsequently launched
+coding-agent process. A shell alias or a change visible only in the bootstrap
+shell is insufficient.
 
 Require both `java -version` and `javac -version` to report Java 25 or newer.
 On macOS, a user-scoped JDK under `~/Library/Java/JavaVirtualMachines` must also
 appear in `/usr/libexec/java_home -V`. Do not install system Maven, system
 Gradle, or an IDE; generated projects provide their build wrappers.
 
-Finally, call `docs_start` through `fluxzero-docs` and confirm that the
-`fluxzero-dev` tools are registered. If an installed plugin or a changed `PATH`
-is not active in this process, tell the user the one native reload or restart
-needed and stop. After activation, repeat the checks instead of assuming they
+Finally, call `docs_start` through `fluxzero-docs` and complete a `get_status`
+call through `fluxzero-dev`. Merely seeing a configured server or advertised
+tool is not readiness. The status call must also succeed in an empty workspace
+before a project exists and report that workspace as
+`session.projectDirectory`. If an installed plugin or a changed `PATH` is not
+active in this process, tell the user the one native reload or restart needed
+and stop. After activation, repeat the completed calls instead of assuming they
 worked. Do not claim readiness or build with duplicate wrapper processes while
 either MCP surface is absent.
 
@@ -131,11 +136,12 @@ installed command output ever differ, the command output wins.
    traversing broad sections. Read focused results first, then follow links only
    for missing detail; do not read the whole graph before implementation.
 5. Only for a new or empty target, follow the MCP project-setup guidance for the
-   chosen build tool and language, then use `fz init` with the Java or Kotlin
-   starter template.
+   chosen build tool and language. Capture the empty-workspace dev status and
+   cursor as described below, then use `fz init --in-place` with the Java or
+   Kotlin starter template so generation occurs in that exact watched root.
    Prefer non-interactive flags when the product brief determines the answers.
-   Generate into an empty target and never use initialization to repair an
-   existing project.
+   Never create and move a named child project, and never use initialization to
+   repair an existing project.
 6. For an existing project, detect the build tool and current Fluxzero SDK from
    its effective Maven or Gradle model before changing dependencies. Read the
    matching MCP setup article and make the smallest compatible build change.
@@ -155,8 +161,9 @@ installed command output ever differ, the command output wins.
 ## Development Feedback Loop
 
 Use the bundled `fluxzero-dev` MCP server as the owner of the local development
-environment. Its `fz mcp --ensure-dev` transport starts one background
-environment when needed and reuses the active project session.
+environment. Its `fz mcp --ensure-dev --allow-empty` transport exposes the
+control plane before a greenfield project exists, starts one background
+environment when needed, and reuses the active workspace session.
 
 The active dev environment exclusively owns source watching, compilation,
 application and local support-service replacement, configured startup commands,
@@ -192,12 +199,29 @@ For each implementation iteration:
    then `get_test_status`, then only the bounded log slice needed for diagnosis.
    Fix the reported cause and repeat from a fresh status cursor.
 
-If the dev MCP was started before a new project had a supported build, generate
-the project first and reconnect to it. Direct wrapper commands are a fallback,
-not the normal agent loop. Use them only when the dev environment is unavailable
-or explicitly reports that verification is unmanaged, for a build/dependency
-change outside its configured scope, or when the user specifically requests a
-release/CI-equivalent verification.
+### Empty-target initialization
+
+When the dev control plane starts before a new project exists:
+
+1. Call `get_status` while the target has no build and retain its session ID and
+   cursor. Confirm that `session.projectDirectory` is the intended target.
+2. Run `fz init --in-place` in that exact target without replacing the MCP
+   transport. Do not accept the default named-child layout and move it later.
+3. Call `wait_for_change` with the pre-initialization cursor. Advance through
+   every returned cursor until project discovery and all startup, compile, and
+   test work caused by initialization reaches a terminal state.
+4. Corroborate the result with fresh `get_status`, `get_test_status`, and
+   `get_active_problems` calls.
+
+Keep the same bridge and session throughout this transition. Do not reconnect,
+restart the MCP server, or start another task merely to make the generated
+project visible.
+
+Direct wrapper commands are a fallback, not the normal agent loop. Use them
+only when the dev environment is unavailable or explicitly reports that
+verification is unmanaged, for a build/dependency change outside its configured
+scope, or when the user specifically requests a release/CI-equivalent
+verification.
 
 ## Implementation Rules
 

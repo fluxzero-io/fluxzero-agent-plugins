@@ -38,6 +38,9 @@ test("canonical instructions document the complete environment prerequisite on e
     "fz version",
     "fz mcp --help",
     "--ensure-dev",
+    "--allow-empty",
+    "fz init --help",
+    "--in-place",
     "java -version",
     "javac -version",
     "brew install fluxzero-io/tap/fluxzero",
@@ -97,7 +100,10 @@ test("Codex onboarding verifies installation and defers one activation boundary"
 test("macOS onboarding proves persistent CLI and GUI process visibility", async () => {
   const readme = await readFile(path.join(root, "README.md"), "utf8");
   assert.match(readme, /env -i HOME="\$HOME" USER="\$USER" LOGNAME="\$LOGNAME" SHELL=\/bin\/zsh/);
-  assert.match(readme, /\/bin\/zsh -l -c 'command -v fz && fz version && fz mcp --help'/);
+  assert.match(
+    readme,
+    /\/bin\/zsh -l -c 'command -v fz && fz version && fz mcp --help && fz init --help'/,
+  );
   assert.ok(readme.includes("/bin/launchctl getenv PATH"));
   assert.ok(readme.includes("/bin/launchctl setenv PATH"));
   assert.match(readme, /affects only applications launched afterward/);
@@ -115,6 +121,32 @@ test("activation requires both MCP surfaces before application work", async () =
       assert.ok(content.includes(instruction), `${file} must require ${instruction}`);
     }
     assert.match(content, /(?:Do not|Never|never) (?:claim readiness|equate|substitute|bypass)/);
+  }
+});
+
+test("activation proves the development MCP with a completed empty-workspace status call", async () => {
+  const files = [
+    "README.md",
+    "skills/build-fluxzero-app/SKILL.md",
+    "project-instructions/AGENTS.md",
+  ];
+  for (const file of files) {
+    const content = await readFile(path.join(root, file), "utf8");
+    assert.match(content, /complete(?:d)?(?: a)?\s+`get_status`\s+call/);
+    assert.match(content, /(?:configuration|configured server|tool registration|tool catalogue).*(?:not readiness|is not readiness)/is);
+    assert.match(content, /empty workspace/);
+  }
+});
+
+test("greenfield workflow keeps one watched root and cursor through in-place generation", async () => {
+  const files = ["README.md", "skills/build-fluxzero-app/SKILL.md"];
+  for (const file of files) {
+    const content = await readFile(path.join(root, file), "utf8");
+    assert.ok(content.includes("fz init --in-place"), `${file} must use in-place initialization`);
+    assert.match(content, /pre-(?:initialization|init).*cursor/is);
+    assert.match(content, /wait_for_change/);
+    assert.match(content, /(?:same|reuses? the).*?(?:session|bridge|environment)/is);
+    assert.match(content, /(?:do not|never).*(?:named child|move)/is);
   }
 });
 
@@ -183,6 +215,7 @@ test("canonical instructions define the complete version-aware authority map", a
 
 test("all adapters expose separate documentation and development MCP servers", async () => {
   const config = JSON.parse(await readFile(path.join(root, "plugins.config.json"), "utf8"));
+  assert.deepEqual(config.devMcpArgs, ["mcp", "--ensure-dev", "--allow-empty"]);
   const paths = [
     "plugins/fluxzero/.mcp.json",
     "adapters/claude/fluxzero/.mcp.json",

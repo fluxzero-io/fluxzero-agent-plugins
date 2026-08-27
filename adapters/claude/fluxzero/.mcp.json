@@ -9,7 +9,8 @@
       "command": "fz",
       "args": [
         "mcp",
-        "--ensure-dev"
+        "--ensure-dev",
+        "--allow-empty"
       ]
     }
   }

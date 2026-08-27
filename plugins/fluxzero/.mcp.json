@@ -11,7 +11,8 @@
       "command": "fz",
       "args": [
         "mcp",
-        "--ensure-dev"
+        "--ensure-dev",
+        "--allow-empty"
       ],
       "required": false,
       "startup_timeout_sec": 120,

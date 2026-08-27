@@ -44,9 +44,9 @@ using a Git-backed marketplace or extension command.
 
 ### Fluxzero CLI prerequisite
 
-The local-development MCP server runs `fz mcp --ensure-dev`, so the Fluxzero
-CLI must be installed and available on the coding agent's `PATH`. Verify this
-before starting application work:
+The local-development MCP server runs `fz mcp --ensure-dev --allow-empty`, so
+the Fluxzero CLI must be installed and available on the coding agent's `PATH`.
+Verify this before starting application work:
 
 ```bash
 fz version
@@ -85,11 +85,12 @@ resolve it:
 
 ```bash
 env -i HOME="$HOME" USER="$USER" LOGNAME="$LOGNAME" SHELL=/bin/zsh \
-  /bin/zsh -l -c 'command -v fz && fz version && fz mcp --help'
+  /bin/zsh -l -c 'command -v fz && fz version && fz mcp --help && fz init --help'
 ```
 
-The MCP help must list `--ensure-dev`, because that is the command surface the
-plugin launches.
+The MCP help must list both `--ensure-dev` and `--allow-empty`, and the init
+help must list `--in-place`. These are the command surfaces the plugin uses to
+keep one dev session alive while a new project is created in its watched root.
 
 macOS GUI applications do not read `.zprofile`. Publish the verified CLI
 directory to processes launched later in the current login session while
@@ -164,9 +165,18 @@ Every package provides the same workflow:
 The two servers have deliberately separate names and responsibilities:
 
 - `fluxzero-docs` serves stable framework guidance over HTTP.
-- `fluxzero-dev` runs `fz mcp --ensure-dev` in the current project. It reuses or
-  starts one background environment and returns current problems, bounded logs,
-  test status, and a cursored development event stream.
+- `fluxzero-dev` runs `fz mcp --ensure-dev --allow-empty` in the current
+  workspace. It exposes the control plane before a greenfield project exists,
+  then reuses the same background environment for current problems, bounded
+  logs, test status, and a cursored development event stream.
+
+For a new workspace, complete a `get_status` call before initialization and
+retain its session ID and cursor. Generate the starter directly into that exact
+watched root with `fz init --in-place`; do not create and move a named child
+project. Continue from the pre-initialization cursor with `wait_for_change`
+until project discovery, compilation, startup, and tests caused by generation
+reach terminal states, then corroborate them with fresh status, test-status,
+and active-problem calls.
 
 When `fluxzero-dev` is active, agents must not run duplicate wrapper tests,
 applications, watchers, or continuous log commands. Project wrappers remain
@@ -236,8 +246,8 @@ restarting the coding agent. Require all of the following evidence:
 
 - the native plugin or extension listing shows Fluxzero installed and enabled
 - `git --version` succeeds
-- the clean login-shell probe above resolves `fz`, and `fz mcp --help` lists
-  `--ensure-dev`
+- the clean login-shell probe above resolves `fz`, `fz mcp --help` lists both
+  `--ensure-dev` and `--allow-empty`, and `fz init --help` lists `--in-place`
 - `java -version` and `javac -version` both report Java 25 or newer
 - on macOS, `/usr/libexec/java_home -V` finds the JDK and the launchd `PATH`
   bridge includes the directory containing `fz`
@@ -253,11 +263,13 @@ session. A new task inside an already-running macOS Codex process is not enough
 after changing its inherited `PATH`.
 
 In the first activated task, confirm that the `build-fluxzero-app` skill is
-available, call `docs_start` through `fluxzero-docs`, and confirm that the
-`fluxzero-dev` tools are registered. Once a Fluxzero project exists, call
-`get_status` immediately. If either MCP server is absent, stop and repair the
-plugin or process environment; do not bypass it with a duplicate wrapper build
-or a separately started development server.
+available, call `docs_start` through `fluxzero-docs`, and complete a
+`get_status` call through `fluxzero-dev` before application work. Merely seeing
+the development server in configuration or a tool catalogue is not readiness.
+In an empty workspace, the status call must still succeed and identify that
+workspace as its project directory. If either completed call is unavailable,
+stop and repair the plugin or process environment; do not bypass it with a
+duplicate wrapper build or a separately started development server.
 
 ### Let the coding agent install its Fluxzero package
 
