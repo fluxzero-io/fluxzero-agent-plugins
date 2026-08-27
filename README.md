@@ -7,7 +7,42 @@ Fluxzero MCP documentation server and automated local-development server.
 Install the package for your coding agent once; projects do not need
 hand-maintained Fluxzero manuals or duplicate MCP registrations.
 
-## Fluxzero CLI prerequisite
+## One-time environment onboarding
+
+Treat first-time Fluxzero onboarding as one complete setup in the current
+coding-agent task. Before asking for application requirements, prepare and
+verify Git, the agent plugin, the Fluxzero CLI, and a Java 25-or-newer JDK. If
+tools are missing, explain once that this is the first Fluxzero build in the
+environment and that the one-time setup enables fast, reliable builds and
+tests. Do not present each prerequisite as an unrelated surprise.
+
+Readiness is a verified state, not an inference from a successful plugin
+command. Do not claim that the environment is ready while one of the checks
+below is missing. In particular, do not bypass missing Git with a branch ZIP or
+another mutable source and then treat Git as optional.
+
+### Git on a bare macOS environment
+
+The plugin commands below use Git. On macOS, inspect Apple Command Line Tools
+without first invoking Apple's `/usr/bin/git` shim:
+
+```bash
+xcode-select -p
+pkgutil --pkg-info com.apple.pkg.CLTools_Executables
+```
+
+If neither check finds a usable developer-tools installation, explain that
+macOS will now open Apple's standard Command Line Tools installer. Run
+`xcode-select --install` exactly once, tell the user to click **Install**, accept
+the license, wait for completion, and return to this same task. Stop at that
+boundary. Do not install the plugin, CLI, or JDK while the dialog is open and do
+not download an alternative plugin archive to avoid the Git prerequisite.
+
+After the user returns, repeat the two non-Git checks and then require a
+successful `git --version`. On other platforms, require `git --version` before
+using a Git-backed marketplace or extension command.
+
+### Fluxzero CLI prerequisite
 
 The local-development MCP server runs `fz mcp --ensure-dev`, so the Fluxzero
 CLI must be installed and available on the coding agent's `PATH`. Verify this
@@ -19,11 +54,18 @@ fz version
 
 Install the latest native CLI when that command is unavailable:
 
-**macOS with Homebrew:**
+**macOS or Linux with Homebrew:**
 
 ```bash
 brew install fluxzero-io/tap/fluxzero
 ```
+
+On a bare macOS machine without Homebrew, first complete the Git/Command Line
+Tools boundary above and then follow the current installation instructions at
+[brew.sh](https://brew.sh). If Homebrew needs user approval, explain the exact
+action and stop until it is complete. Follow Homebrew's printed shell setup so
+a clean login shell can resolve both `brew` and `fz`; do not replace the
+recommended macOS route with an unversioned CLI download.
 
 **Windows with WinGet:**
 
@@ -37,8 +79,54 @@ winget install --exact --id Fluxzero.FluxzeroCLI
 curl -sSL https://github.com/fluxzero-io/fluxzero-cli/releases/latest/download/install.sh | sh -s -- --install-path
 ```
 
-Run `fz version` again after installation. Start a new terminal or coding-agent
-session if the current process does not see the updated `PATH`.
+Run `fz version` again after installation. On macOS, also prove that persistent
+login configuration—not merely the bootstrap task's inherited environment—can
+resolve it:
+
+```bash
+env -i HOME="$HOME" USER="$USER" LOGNAME="$LOGNAME" SHELL=/bin/zsh \
+  /bin/zsh -l -c 'command -v fz && fz version && fz mcp --help'
+```
+
+The MCP help must list `--ensure-dev`, because that is the command surface the
+plugin launches.
+
+macOS GUI applications do not read `.zprofile`. Publish the verified CLI
+directory to processes launched later in the current login session while
+preserving any existing launchd path:
+
+```bash
+fz_path=$(env -i HOME="$HOME" USER="$USER" LOGNAME="$LOGNAME" SHELL=/bin/zsh \
+  /bin/zsh -l -c 'command -v fz')
+fz_dir=$(dirname "$fz_path")
+launchd_path=$(/bin/launchctl getenv PATH 2>/dev/null || true)
+case ":$launchd_path:" in
+  *":$fz_dir:"*) ;;
+  *)
+    if [ -n "$launchd_path" ]; then
+      launchd_path="$fz_dir:$launchd_path"
+    else
+      launchd_path="$fz_dir:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+    fi
+    /bin/launchctl setenv PATH "$launchd_path"
+    ;;
+esac
+```
+
+This bridge affects only applications launched afterward; it does not update
+an already-running Codex/ChatGPT process. The login-shell configuration remains
+the persistent installation state.
+
+### Java prerequisite
+
+Before application work, require both `java -version` and `javac -version` to
+report Java 25 or newer. Install a current JDK through an existing package
+manager or a concrete checksum-verified Eclipse Temurin release when needed.
+On macOS, keep a user-scoped JDK bundle under
+`~/Library/Java/JavaVirtualMachines` and verify it through
+`/usr/libexec/java_home -V`; a shell-only `JAVA_HOME` is not background-service
+readiness. Do not install system Maven, system Gradle, or an IDE: generated
+projects include their build wrappers.
 
 ## Authoritative guidance
 
@@ -91,9 +179,13 @@ available for CI, releases, and explicit fallback verification.
 ```bash
 codex plugin marketplace add fluxzero-io/fluxzero-agent-plugins
 codex plugin add fluxzero@fluxzero
+codex plugin list --json
 ```
 
-Start a new Codex task after installation or update.
+Require the final output to list `fluxzero@fluxzero` as installed and enabled.
+If `codex` is not on `PATH`, the Codex desktop application bundles the same
+command at `/Applications/ChatGPT.app/Contents/Resources/codex`; use that
+absolute executable for all three commands. Do not start a new task yet.
 
 ### Claude Code
 
@@ -102,7 +194,8 @@ claude plugin marketplace add fluxzero-io/fluxzero-agent-plugins
 claude plugin install fluxzero@fluxzero
 ```
 
-Run `/reload-plugins` or start a new Claude Code session.
+Defer `/reload-plugins` or a new Claude Code session until the final activation
+step below.
 
 ### Cursor
 
@@ -114,8 +207,8 @@ Cursor Marketplace publication. Once listed, install it in Cursor with:
 ```
 
 For local verification before marketplace approval, copy
-`adapters/cursor/fluxzero` to `~/.cursor/plugins/local/fluxzero` and reload
-Cursor.
+`adapters/cursor/fluxzero` to `~/.cursor/plugins/local/fluxzero`, but defer the
+Cursor reload until the final activation step below.
 
 ### Gemini CLI
 
@@ -123,7 +216,7 @@ Cursor.
 gemini extensions install https://github.com/fluxzero-io/fluxzero-agent-plugins --consent
 ```
 
-Restart Gemini CLI after installation or update.
+Defer the Gemini CLI restart until the final activation step below.
 
 ### GitHub Copilot CLI
 
@@ -132,15 +225,47 @@ copilot plugin marketplace add fluxzero-io/fluxzero-agent-plugins
 copilot plugin install fluxzero@fluxzero
 ```
 
-Start a new Copilot CLI session after installation or update. The same plugin
-components are also available to Copilot app clients that use CLI plugins.
+Defer the new Copilot CLI session until the final activation step below. The
+same plugin components are also available to Copilot app clients that use CLI
+plugins.
+
+### Verify readiness, then activate once
+
+After installing the package, finish every prerequisite before refreshing or
+restarting the coding agent. Require all of the following evidence:
+
+- the native plugin or extension listing shows Fluxzero installed and enabled
+- `git --version` succeeds
+- the clean login-shell probe above resolves `fz`, and `fz mcp --help` lists
+  `--ensure-dev`
+- `java -version` and `javac -version` both report Java 25 or newer
+- on macOS, `/usr/libexec/java_home -V` finds the JDK and the launchd `PATH`
+  bridge includes the directory containing `fz`
+
+Do not equate a successful marketplace command, archive download, or
+interactive-shell check with readiness. Do not ask for application requirements
+while any item is missing.
+
+Only after every check passes, cross one activation boundary: completely quit
+and relaunch Codex/ChatGPT on macOS, run `/reload-plugins` or start a new Claude
+Code session, reload Cursor, restart Gemini CLI, or start a new Copilot CLI
+session. A new task inside an already-running macOS Codex process is not enough
+after changing its inherited `PATH`.
+
+In the first activated task, confirm that the `build-fluxzero-app` skill is
+available, call `docs_start` through `fluxzero-docs`, and confirm that the
+`fluxzero-dev` tools are registered. Once a Fluxzero project exists, call
+`get_status` immediately. If either MCP server is absent, stop and repair the
+plugin or process environment; do not bypass it with a duplicate wrapper build
+or a separately started development server.
 
 ### Let the coding agent install its Fluxzero package
 
 This minimal prompt is intentionally agent-neutral:
 
 ```text
-I want to build an application using Fluxzero. Ensure the Fluxzero plugin from https://github.com/fluxzero-io/fluxzero-agent-plugins is installed and available, then let me know when you are ready for my application requirements.
+I want to build an application using Fluxzero. Follow the onboarding instructions at https://plugins.fluxzero.io to install the Fluxzero plugin and prepare this environment.
+Let me know when everything is ready for my application requirements.
 ```
 
 Gemini CLI calls this package an extension. Its dedicated instructions and

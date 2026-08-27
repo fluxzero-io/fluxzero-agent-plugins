@@ -13,19 +13,33 @@ standalone Java app, Spring-only app, Node app, custom HTTP server, custom event
 store, or plain in-memory service is a failed result even if it satisfies some
 business behavior.
 
-## Fluxzero CLI Prerequisite
+## Environment Readiness
 
-The bundled `fluxzero-dev` MCP server invokes `fz mcp --ensure-dev`. The
-Fluxzero CLI must therefore be installed and available on the agent process's
-`PATH` before local application work starts. Verify it with:
+Treat Git, the Fluxzero CLI, a Java 25-or-newer JDK, and both bundled MCP
+servers as hard prerequisites. Verify them before inspecting or changing an
+application. A successful plugin command alone is not readiness, and a missing
+tool is not permission to bypass the supported workflow.
+
+On macOS, check Apple Command Line Tools before invoking Apple's Git shim:
 
 ```bash
-fz version
+xcode-select -p
+pkgutil --pkg-info com.apple.pkg.CLTools_Executables
 ```
 
-If `fz` is unavailable, install the latest native CLI for the current system:
+If neither check finds an installation, explain once that this first Fluxzero
+build needs a one-time tool setup for fast, reliable builds and tests. Run
+`xcode-select --install` exactly once, tell the user to click **Install**, accept
+the license, wait for completion, and return to this task; then stop. Do not
+continue with a branch ZIP, mutable source archive, plugin install, CLI install,
+or JDK install while the Apple dialog is open. After the user returns, repeat
+both checks before requiring `git --version`. On other platforms, require
+`git --version` directly.
 
-- **macOS with Homebrew:**
+The bundled `fluxzero-dev` server invokes `fz mcp --ensure-dev`. If `fz version`
+is unavailable, install the latest native CLI for the current system:
+
+- **macOS or Linux with Homebrew:**
   ```bash
   brew install fluxzero-io/tap/fluxzero
   ```
@@ -38,10 +52,33 @@ If `fz` is unavailable, install the latest native CLI for the current system:
   curl -sSL https://github.com/fluxzero-io/fluxzero-cli/releases/latest/download/install.sh | sh -s -- --install-path
   ```
 
-Run `fz version` again after installation. If the current coding-agent process
-does not see the updated `PATH`, tell the user to start a new terminal or agent
-session before continuing. Do not substitute an unrelated development server:
-the packaged MCP configuration deliberately depends on `fz`.
+On a bare Mac without Homebrew, finish the Command Line Tools boundary first,
+then follow the current installation instructions at `https://brew.sh` and its
+printed shell-setup step before installing the CLI. Do not reinterpret the Unix
+fallback as the recommended macOS route. Prove that persistent login setup can
+resolve the exact development command:
+
+```bash
+env -i HOME="$HOME" USER="$USER" LOGNAME="$LOGNAME" SHELL=/bin/zsh \
+  /bin/zsh -l -c 'command -v fz && fz version && fz mcp --help'
+```
+
+Require the help output to list `--ensure-dev`. On macOS, also ensure that the
+directory containing `fz` is present in the launchd `PATH` inherited by a
+subsequently launched coding-agent process. A shell alias or a change visible
+only in the bootstrap shell is insufficient.
+
+Require both `java -version` and `javac -version` to report Java 25 or newer.
+On macOS, a user-scoped JDK under `~/Library/Java/JavaVirtualMachines` must also
+appear in `/usr/libexec/java_home -V`. Do not install system Maven, system
+Gradle, or an IDE; generated projects provide their build wrappers.
+
+Finally, call `docs_start` through `fluxzero-docs` and confirm that the
+`fluxzero-dev` tools are registered. If an installed plugin or a changed `PATH`
+is not active in this process, tell the user the one native reload or restart
+needed and stop. After activation, repeat the checks instead of assuming they
+worked. Do not claim readiness or build with duplicate wrapper processes while
+either MCP surface is absent.
 
 ## Authoritative Sources
 
