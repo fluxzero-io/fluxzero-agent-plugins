@@ -182,10 +182,13 @@ For each implementation iteration:
 
 1. Call `get_status` and remember its session ID and cursor before editing.
 2. Make one coherent source or test change.
-3. Call `wait_for_change` with that cursor. Inspect the returned structured
-   events, advance to its returned cursor, and wait again while work relevant to
-   the edit is still in progress. Do not stop merely because the first
-   `source-changed` or `compile-started` event arrived.
+3. Call `wait_for_change` with the cursor's `sessionId` and `sequence` as the
+   tool arguments `sessionId` and `afterSequence`. Never omit them after an
+   edit. Inspect the returned structured events and advance to its returned
+   cursor. If `hasMore` is true, drain the next page immediately from that
+   cursor; otherwise keep waiting while work relevant to the edit is still in
+   progress. Do not stop merely because the first `source-changed` or
+   `compile-started` event arrived.
 4. For a backend change, wait through compile/reload and continue from the
    pre-edit cursor until a `source: test`, `stream: lifecycle` event reaches
    `passed` or `failed`. Corroborate it with `get_test_status.tests`. That tool
@@ -206,9 +209,11 @@ When the dev control plane starts before a new project exists:
    cursor. Confirm that `session.projectDirectory` is the intended target.
 2. Run `fz init --in-place` in that exact target without replacing the MCP
    transport. Do not accept the default named-child layout and move it later.
-3. Call `wait_for_change` with the pre-initialization cursor. Advance through
-   every returned cursor until project discovery and all startup, compile, and
-   test work caused by initialization reaches a terminal state.
+3. Call `wait_for_change` with the pre-initialization cursor's `sessionId` and
+   `sequence` as `sessionId` and `afterSequence`. Drain every `hasMore` page and
+   advance through every returned cursor until project discovery and all
+   startup, compile, and test work caused by initialization reaches a terminal
+   state.
 4. Corroborate the result with fresh `get_status`, `get_test_status`, and
    `get_active_problems` calls.
 

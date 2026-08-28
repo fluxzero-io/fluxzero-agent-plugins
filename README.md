@@ -173,10 +173,11 @@ The two servers have deliberately separate names and responsibilities:
 For a new workspace, complete a `get_status` call before initialization and
 retain its session ID and cursor. Generate the starter directly into that exact
 watched root with `fz init --in-place`; do not create and move a named child
-project. Continue from the pre-initialization cursor with `wait_for_change`
-until project discovery, compilation, startup, and tests caused by generation
-reach terminal states, then corroborate them with fresh status, test-status,
-and active-problem calls.
+project. Continue from the pre-initialization cursor with `wait_for_change`,
+passing its `sessionId` and `sequence` as `sessionId` and `afterSequence`.
+Drain every `hasMore` page from the returned cursor until project discovery,
+compilation, startup, and tests caused by generation reach terminal states,
+then corroborate them with fresh status, test-status, and active-problem calls.
 
 When `fluxzero-dev` is active, agents must not run duplicate wrapper tests,
 applications, watchers, or continuous log commands. Project wrappers remain
