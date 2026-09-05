@@ -40,10 +40,11 @@ test("canonical instructions document the complete environment prerequisite on e
     "--ensure-dev",
     "fz init --help",
     "--in-place",
-    "java -version",
-    "javac -version",
+    "Java 25",
     "brew install fluxzero-io/tap/fluxzero",
+    "brew install openjdk@25",
     "winget install --exact --id Fluxzero.FluxzeroCLI",
+    "winget install --exact --id EclipseAdoptium.Temurin.25.JDK",
     "https://github.com/fluxzero-io/fluxzero-cli/releases/latest/download/install.sh",
   ];
 
@@ -52,6 +53,21 @@ test("canonical instructions document the complete environment prerequisite on e
     for (const instruction of requiredInstructions) {
       assert.ok(content.includes(instruction), `${file} must document ${instruction}`);
     }
+  }
+});
+
+test("agents ask one nontechnical question before installing Java", async () => {
+  const files = [
+    "README.md",
+    "skills/build-fluxzero-app/SKILL.md",
+    "project-instructions/AGENTS.md",
+  ];
+  for (const file of files) {
+    const content = await readFile(path.join(root, file), "utf8");
+    assert.match(content, /Fluxzero needs\s+Java 25\. May I install it\?/);
+    assert.match(content, /(?:explicit approval|After approval)/i);
+    assert.match(content, /retry the original (?:Fluxzero )?command/i);
+    assert.match(content, /(?:not\s+silently\s+install|(?:not|Do not)\s+install Java\s+silently)/i);
   }
 });
 
