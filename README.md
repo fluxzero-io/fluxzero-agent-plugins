@@ -11,7 +11,7 @@ hand-maintained Fluxzero manuals or duplicate MCP registrations.
 
 Treat first-time Fluxzero onboarding as one complete setup in the current
 coding-agent task. Before asking for application requirements, prepare and
-verify Git, the agent plugin, the Fluxzero CLI, and a Java 25-or-newer JDK. If
+verify Git, the agent plugin, the Fluxzero CLI, and Java 25. If
 tools are missing, explain once that this is the first Fluxzero build in the
 environment and that the one-time setup enables fast, reliable builds and
 tests. Do not present each prerequisite as an unrelated surprise.
@@ -35,7 +35,7 @@ If neither check finds a usable developer-tools installation, explain that
 macOS will now open Apple's standard Command Line Tools installer. Run
 `xcode-select --install` exactly once, tell the user to click **Install**, accept
 the license, wait for completion, and return to this same task. Stop at that
-boundary. Do not install the plugin, CLI, or JDK while the dialog is open and do
+boundary. Do not install the plugin, CLI, or Java while the dialog is open and do
 not download an alternative plugin archive to avoid the Git prerequisite.
 
 After the user returns, repeat the two non-Git checks and then require a
@@ -118,16 +118,24 @@ This bridge affects only applications launched afterward; it does not update
 an already-running Codex/ChatGPT process. The login-shell configuration remains
 the persistent installation state.
 
-### Java prerequisite
+### Java 25
 
-Before application work, require both `java -version` and `javac -version` to
-report Java 25 or newer. Install a current JDK through an existing package
-manager or a concrete checksum-verified Eclipse Temurin release when needed.
-On macOS, keep a user-scoped JDK bundle under
-`~/Library/Java/JavaVirtualMachines` and verify it through
-`/usr/libexec/java_home -V`; a shell-only `JAVA_HOME` is not background-service
-readiness. Do not install system Maven, system Gradle, or an IDE: generated
-projects include their build wrappers.
+The Fluxzero CLI checks Java when local development starts. If Java 25 is
+missing, the agent asks the user one nontechnical question: **"Fluxzero needs
+Java 25. May I install it?"** After approval, the agent performs the matching
+Homebrew or WinGet installation, then must retry the original Fluxzero command.
+The agent must not silently install software, ask the user to run the command,
+or expose package, path, runtime, JDK, or environment-variable details in that
+permission question.
+
+The stable agent-side installation commands are `brew install openjdk@25` on
+macOS or Linux with Homebrew and
+`winget install --exact --id EclipseAdoptium.Temurin.25.JDK --accept-package-agreements --accept-source-agreements --disable-interactivity`
+on Windows. Other Linux environments should use their established package
+manager after the same approval. Successful Fluxzero readiness,
+not separate `java` or `javac` shell probes, verifies the result. Generated
+projects already include Maven or Gradle wrappers; no system build tool or IDE
+is required.
 
 ## Authoritative guidance
 
@@ -248,9 +256,9 @@ restarting the coding agent. Require all of the following evidence:
 - `git --version` succeeds
 - the clean login-shell probe above resolves `fz`, `fz mcp --help` lists
   `--ensure-dev`, and `fz init --help` lists `--in-place`
-- `java -version` and `javac -version` both report Java 25 or newer
-- on macOS, `/usr/libexec/java_home -V` finds the JDK and the launchd `PATH`
-  bridge includes the directory containing `fz`
+- Fluxzero development readiness succeeds; if Java 25 was initially missing,
+  the agent obtained approval, installed it, and retried the original command
+- on macOS, the launchd `PATH` bridge includes the directory containing `fz`
 
 Do not equate a successful marketplace command, archive download, or
 interactive-shell check with readiness. Do not ask for application requirements
