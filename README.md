@@ -121,18 +121,22 @@ the persistent installation state.
 ### Java 25
 
 The Fluxzero CLI checks Java when local development starts. If Java 25 is
-missing, the agent asks the user one nontechnical question: **"Fluxzero needs
-Java 25. May I install it?"** After approval, the agent performs the matching
-Homebrew or WinGet installation, then must retry the original Fluxzero command.
-The agent must not silently install software, ask the user to run the command,
-or expose package, path, runtime, JDK, or environment-variable details in that
-permission question.
+missing and the coding agent's execution environment permits software
+installation, the agent installs it without asking the user and retries the
+original Fluxzero command. Existing agent execution permission is sufficient;
+the workflow must not introduce a second confirmation step.
+
+If the environment requires separate user approval for system installation,
+the agent asks only: **"Fluxzero needs Java 25. May I install it?"** It then
+performs the installation after approval and retries the original Fluxzero
+command. The agent never asks the user to run the command or exposes package,
+path, runtime, JDK, or environment-variable details in that permission question.
 
 The stable agent-side installation commands are `brew install openjdk@25` on
 macOS or Linux with Homebrew and
 `winget install --exact --id EclipseAdoptium.Temurin.25.JDK --accept-package-agreements --accept-source-agreements --disable-interactivity`
 on Windows. Other Linux environments should use their established package
-manager after the same approval. Successful Fluxzero readiness,
+manager. Successful Fluxzero readiness,
 not separate `java` or `javac` shell probes, verifies the result. Generated
 projects already include Maven or Gradle wrappers; no system build tool or IDE
 is required.
@@ -257,7 +261,8 @@ restarting the coding agent. Require all of the following evidence:
 - the clean login-shell probe above resolves `fz`, `fz mcp --help` lists
   `--ensure-dev`, and `fz init --help` lists `--in-place`
 - Fluxzero development readiness succeeds; if Java 25 was initially missing,
-  the agent obtained approval, installed it, and retried the original command
+  the agent installed it and retried the original command, obtaining separate
+  approval only when the execution environment required it
 - on macOS, the launchd `PATH` bridge includes the directory containing `fz`
 
 Do not equate a successful marketplace command, archive download, or
