@@ -56,7 +56,7 @@ test("canonical instructions document the complete environment prerequisite on e
   }
 });
 
-test("agents ask one nontechnical question before installing Java", async () => {
+test("agents install Java autonomously unless the environment requires approval", async () => {
   const files = [
     "README.md",
     "skills/build-fluxzero-app/SKILL.md",
@@ -65,9 +65,11 @@ test("agents ask one nontechnical question before installing Java", async () => 
   for (const file of files) {
     const content = await readFile(path.join(root, file), "utf8");
     assert.match(content, /Fluxzero needs\s+Java 25\. May I install it\?/);
-    assert.match(content, /(?:explicit approval|After approval)/i);
-    assert.match(content, /retry the original (?:Fluxzero )?command/i);
-    assert.match(content, /(?:not\s+silently\s+install|(?:not|Do not)\s+install Java\s+silently)/i);
+    assert.match(content, /permits software\s+installation[\s\S]{0,180}without asking the user/i);
+    assert.match(content, /existing (?:agent )?execution permission (?:is sufficient|as authorization)/i);
+    assert.match(content, /(?:only )?if the (?:execution )?environment requires separate user approval/i);
+    assert.match(content, /retr(?:y|ies)\s+the\s+original\s+(?:Fluxzero\s+)?command/i);
+    assert.doesNotMatch(content, /do not install Java silently|must not silently install/i);
   }
 });
 

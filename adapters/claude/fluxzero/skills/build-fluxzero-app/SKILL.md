@@ -69,21 +69,26 @@ is present in the launchd `PATH` inherited by a subsequently launched
 coding-agent process. A shell alias or a change visible only in the bootstrap
 shell is insufficient.
 
-Let the Fluxzero CLI own Java detection. If it reports that Java 25 is needed,
-ask only: **"Fluxzero needs Java 25. May I install it?"** Do not ask the user to
-run a command or explain package names, paths, JDKs, runtimes, or environment
-variables. After explicit approval, install it yourself using the matching
-command:
+Let the Fluxzero CLI own Java detection. If it reports that Java 25 is needed
+and the current execution environment permits software installation, install it
+yourself without asking the user and continue the task. Treat the agent's
+existing execution permission as authorization; do not add a second permission
+boundary. Use the matching non-interactive command where supported:
 
 - macOS or Linux with Homebrew: `brew install openjdk@25`
 - Windows: `winget install --exact --id EclipseAdoptium.Temurin.25.JDK --accept-package-agreements --accept-source-agreements --disable-interactivity`
 - another Linux environment: use its established package manager to install a
-  Java 25 development kit after the same approval
+  Java 25 development kit
 
-Retry the original Fluxzero command after installation. Do not install Java
-silently, require a terminal restart, or use direct `java`/`javac` checks as a
-substitute for successful Fluxzero readiness. Do not install system Maven,
-system Gradle, or an IDE; generated projects provide their build wrappers.
+If the execution environment requires separate user approval for system
+installation, ask only: **"Fluxzero needs Java 25. May I install it?"** Do not
+ask the user to run a command or explain package names, paths, JDKs, runtimes,
+or environment variables. Continue the installation after approval; never try
+to bypass a denied permission. Retry the original Fluxzero command after
+installation. Do not require a terminal restart or use direct `java`/`javac`
+checks as a substitute for successful Fluxzero readiness. Do not install system
+Maven, system Gradle, or an IDE; generated projects provide their build
+wrappers.
 
 Finally, call `docs_start` through `fluxzero-docs` and complete a `get_status`
 call through `fluxzero-dev`. Merely seeing a configured server or advertised
