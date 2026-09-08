@@ -90,6 +90,13 @@ checks as a substitute for successful Fluxzero readiness. Do not install system
 Maven, system Gradle, or an IDE; generated projects provide their build
 wrappers.
 
+Before treating missing development tools as a plugin problem, check the MCP
+startup error and working directory. In a multi-repository workspace, reconnect
+from the intended repository/worktree or pass `--project-dir` as documented by
+`fz mcp --help`. A shell `cd` does not retarget an existing MCP process, and
+reloading the same wrong directory will not help. After reconnecting, verify
+the selected root with `get_status`.
+
 Finally, call `docs_start` through `fluxzero-docs` and complete a `get_status`
 call through `fluxzero-dev`. Merely seeing a configured server or advertised
 tool is not readiness. The status call must also succeed in an empty workspace
