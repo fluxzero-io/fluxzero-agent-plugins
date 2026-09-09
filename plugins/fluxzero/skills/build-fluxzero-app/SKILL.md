@@ -168,10 +168,14 @@ installed command output ever differ, the command output wins.
    its effective Maven or Gradle model before changing dependencies. Read the
    matching MCP setup article and make the smallest compatible build change.
 7. When `docs_start` advertises `sdkVersion`, compare it with the project's
-   Fluxzero SDK version. Upgrade an older project before relying on the manuals.
-   Keep a project version that is newer; never downgrade it to match the
-   documentation. If metadata is unavailable, do not invent a version: use the
-   MCP project-setup guidance and Maven Central release metadata.
+   Fluxzero SDK version. When they differ, use the synchronized
+   `.fluxzero/agents` manuals for version-sensitive project guidance and use
+   `fluxzero-docs` only for concepts that apply to the detected version. Do not
+   upgrade or downgrade a project merely to align it with the documentation
+   server. Upgrade only when the user requests it or the task requires a newer
+   capability, and then inspect the intervening migration notes before editing.
+   If metadata is unavailable, do not invent a version: use the MCP
+   project-setup guidance and Maven Central release metadata.
 8. Treat generated code as a starting point. Replace its generic package,
    example domain, endpoints, dependencies, and tests as required by the actual
    product brief; do not mistake successful generation for task completion.
@@ -191,6 +195,10 @@ The active dev environment exclusively owns source watching, compilation,
 application and local support-service replacement, configured startup commands,
 and background test execution. Do not start a second build, test process,
 application, watcher, or unbounded log follower in parallel with it.
+The Dev Server also owns test selection and timing. Observe the tests it starts;
+do not manually rerun a selected test, trigger a fresh test merely to refresh
+evidence, run existing regression tests as an extra check, or run the whole
+suite after edits. CI owns full regression coverage.
 
 The MCP control plane can connect while applications, frontends, or support
 services are still starting. On the first connection, call `get_status`
@@ -209,14 +217,15 @@ For each implementation iteration:
    events, advance to its returned cursor, and wait again while work relevant to
    the edit is still in progress. Do not stop merely because the first
    `source-changed` or `compile-started` event arrived.
-4. For a backend change, wait through compile/reload and continue from the
-   pre-edit cursor until a `source: test`, `stream: lifecycle` event reaches
-   `passed` or `failed`. Corroborate it with `get_test_status.tests`. That tool
-   exposes current service state, not a per-edit run record; an old green state
-   is history, not evidence for the new edit. A change outside the backend test
-   scope may start no test run and leave the prior status unchanged. For a
-   frontend-only change, follow the delegated frontend events and service state;
-   do not require unrelated backend tests.
+4. For a backend change, wait through compile/reload. If the Dev Server starts a
+   relevant test run, follow its lifecycle event to `passed` or `failed` and
+   corroborate it with `get_test_status.tests`. If it selects no tests, a stable
+   compile/reload with no new problem is the terminal state; do not invoke the
+   wrapper to manufacture a fresh green result. When adding or changing a test,
+   make the Dev Server's resulting run pass once. Do not rerun it after later
+   unrelated edits unless the Dev Server selects it again. For a frontend-only
+   change, follow the delegated frontend events and service state; do not require
+   unrelated backend tests.
 5. On a terminal failure or degraded service, inspect `get_active_problems`,
    then `get_test_status`, then only the bounded log slice needed for diagnosis.
    Fix the reported cause and repeat from a fresh status cursor.
@@ -239,11 +248,11 @@ Keep the same bridge and session throughout this transition. Do not reconnect,
 restart the MCP server, or start another task merely to make the generated
 project visible.
 
-Direct wrapper commands are a fallback, not the normal agent loop. Use them
-only when the dev environment is unavailable or explicitly reports that
-verification is unmanaged, for a build/dependency change outside its configured
-scope, or when the user specifically requests a release/CI-equivalent
-verification.
+Direct wrapper commands are not a second verification loop. Use one only when
+the dev environment explicitly reports that verification is unmanaged or the
+user specifically requests the command. In that fallback, run only a new or
+changed focused test once when needed to make it green. Do not run existing
+regression tests or the full suite for extra confidence; CI owns that coverage.
 
 ## Implementation Rules
 
@@ -255,6 +264,9 @@ verification.
 - In an existing repository, keep unrelated code and configuration intact.
   Prefer a focused migration or feature slice over a broad rewrite, and do not
   add project-local copies of this plugin, its skill, or the MCP configuration.
+- Keep one writer for each feature slice. Parallel agents may investigate
+  independent questions, but must not concurrently edit the same source,
+  configuration, or tests from stale snapshots.
 - Use the signed-in user or Fluxzero request context for user-scoped actions.
   Do not let clients submit another user's identity for actions that must use
   the authenticated actor.
@@ -277,14 +289,18 @@ verification.
   correction behavior requested by the product brief.
 - Endpoint tests are useful when the task promises front-end-callable actions
   or discovery.
+- Add the smallest focused test that proves new behavior. Once the Dev Server
+  has run a new or changed test successfully, rely on its impact selection for
+  later edits instead of rerunning that test or the full suite yourself.
 
 ## Before Finishing
 
 Finish only after the cursored event loop reaches stable service states, every
-test run caused by the edit has passed, and the active-problem list is empty. If
-the edit legitimately causes no test run, do not reuse a historical green state
-as evidence. If structured verification is unavailable, state why and run the
-appropriate project wrapper once as the fallback.
+test run actually started by the Dev Server has passed, and the active-problem
+list is empty. A coherent edit for which the Dev Server selects no tests does
+not require a manual test run. If structured verification is unavailable, state
+why and run a new or changed focused test once only when its behavior still
+needs proof. Leave full regression verification to CI.
 
 If the result is not recognizably Fluxzero, repair it before answering. Do not
 present a generic app as complete.

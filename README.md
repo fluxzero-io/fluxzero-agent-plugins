@@ -158,10 +158,13 @@ Version-sensitive knowledge stays with the component that owns it:
 | SDK implementation details when manuals are insufficient | The matching release tag in `https://github.com/fluxzero-io/fluxzero-sdk-java`, never `main` |
 
 Agents compare the SDK version advertised by `fluxzero-docs` with the effective
-project version before applying version-sensitive guidance. They inspect
-existing project configuration and command output instead of copying option or
-YAML catalogs into the plugin. When plugin wording and command output differ,
-command output wins.
+project version before applying version-sensitive guidance. A mismatch does not
+by itself justify changing the project: version-specific guidance comes from
+the synchronized `.fluxzero/agents` manuals, and an SDK upgrade happens only on
+request or when a required capability demands it. Agents inspect existing
+project configuration and command output instead of copying option or YAML
+catalogs into the plugin. When plugin wording and command output differ, command
+output wins.
 
 Every package provides the same workflow:
 
@@ -192,7 +195,14 @@ and active-problem calls.
 
 When `fluxzero-dev` is active, agents must not run duplicate wrapper tests,
 applications, watchers, or continuous log commands. Project wrappers remain
-available for CI, releases, and explicit fallback verification.
+available for CI and releases; CI owns full regression coverage. The Dev Server
+chooses and runs impacted tests. An agent observes those results, makes a new or
+changed test pass once, and does not manually rerun tests, existing regression
+tests, or the full suite after edits. If verification is explicitly unmanaged,
+the agent may run only its new or changed focused test once. If no test is
+selected for an edit, a healthy compile/reload is sufficient fresh feedback.
+Keep one writer per feature slice so parallel agents do not edit the same files
+from different snapshots.
 
 ## Install
 

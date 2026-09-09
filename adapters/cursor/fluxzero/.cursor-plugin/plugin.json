@@ -1,7 +1,7 @@
 {
   "name": "fluxzero",
   "displayName": "Fluxzero",
-  "version": "0.3.6",
+  "version": "0.3.7",
   "description": "Build and extend Fluxzero applications with verified first-time prerequisites, current SDK guidance, and an automated local development loop.",
   "author": {
     "name": "Fluxzero"
