@@ -230,6 +230,49 @@ test("canonical instructions define the complete version-aware authority map", a
   }
 });
 
+test("agents leave test selection and execution to the active Dev Server", async () => {
+  const files = [
+    "README.md",
+    "skills/build-fluxzero-app/SKILL.md",
+    "project-instructions/AGENTS.md",
+  ];
+  for (const file of files) {
+    const content = await readFile(path.join(root, file), "utf8");
+    assert.match(content, /Dev Server[\s\S]{0,120}(?:chooses|selects|selection)/i);
+    assert.match(content, /(?:do\s+not|must\s+not|does\s+not)[\s\S]{0,120}(?:manually\s+)?rerun/i);
+    assert.match(content, /(?:do\s+not|must\s+not|does\s+not)[\s\S]{0,180}(?:full|whole)\s+suite/i);
+    assert.match(content, /(?:selects?\s+no\s+tests|no\s+test\s+is\s+selected)/i);
+    assert.match(content, /compile\/reload/i);
+    assert.match(content, /CI\s+owns[\s\S]{0,80}(?:full\s+)?regression/i);
+    assert.doesNotMatch(content, /final\s+CI-equivalent/i);
+  }
+});
+
+test("documentation skew does not force an SDK migration", async () => {
+  const files = [
+    "README.md",
+    "skills/build-fluxzero-app/SKILL.md",
+    "project-instructions/AGENTS.md",
+  ];
+  for (const file of files) {
+    const content = await readFile(path.join(root, file), "utf8");
+    assert.match(content, /(?:mismatch|when they differ)[\s\S]{0,250}(?:not|does not|do not)[\s\S]{0,160}(?:upgrade|changing the project)/i);
+    assert.match(content, /\.fluxzero\/agents/);
+  }
+});
+
+test("agent workflow keeps one writer per feature slice", async () => {
+  const files = [
+    "README.md",
+    "skills/build-fluxzero-app/SKILL.md",
+    "project-instructions/AGENTS.md",
+  ];
+  for (const file of files) {
+    const content = await readFile(path.join(root, file), "utf8");
+    assert.match(content, /one writer (?:for|per) (?:each )?feature slice/i);
+  }
+});
+
 test("all adapters expose separate documentation and development MCP servers", async () => {
   const config = JSON.parse(await readFile(path.join(root, "plugins.config.json"), "utf8"));
   assert.deepEqual(config.devMcpArgs, ["mcp", "--ensure-dev"]);
