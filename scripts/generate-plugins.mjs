@@ -105,7 +105,8 @@ const outputs = new Map([
       mcpServers: {
         "fluxzero-dev": {
           ...devMcp,
-          required: true,
+          // The CLI may still be missing when onboarding resumes after an OS confirmation.
+          required: false,
           startup_timeout_sec: 120,
           tool_timeout_sec: 120,
           default_tools_approval_mode: "approve",

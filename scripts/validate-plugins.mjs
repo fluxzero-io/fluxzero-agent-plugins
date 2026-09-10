@@ -106,7 +106,7 @@ assertEqual(gemini.mcpServers["fluxzero-dev"].args, config.devMcpArgs, "Gemini d
 for (const servers of [codexMcp, claudeMcp, cursorMcp, copilotMcp, gemini.mcpServers]) {
   assertEqual(Object.keys(servers), ["fluxzero-dev"], "one local MCP for documentation and development");
 }
-assertEqual(codexMcp["fluxzero-dev"].required, true, "local documentation MCP required flag");
+assertEqual(codexMcp["fluxzero-dev"].required, false, "MCP startup must allow incomplete CLI onboarding");
 
 const marketplaces = {
   codex: [".agents/plugins/marketplace.json", "./plugins/fluxzero"],
