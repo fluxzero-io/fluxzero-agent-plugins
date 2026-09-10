@@ -5,11 +5,9 @@
   "description": "Build and extend Fluxzero applications with verified first-time prerequisites, current SDK guidance, and an automated local development loop.",
   "repository": "https://github.com/fluxzero-io/fluxzero-agent-plugins",
   "homepage": "https://fluxzero.io",
-  "mcpUrl": "https://api.dashboard.fluxzero.io/mcp",
   "devMcpCommand": "fz",
   "devMcpArgs": [
-    "mcp",
-    "--ensure-dev"
+    "mcp"
   ],
   "author": {
     "name": "Fluxzero",

@@ -3,15 +3,10 @@
   "version": "0.3.7",
   "description": "Build and extend Fluxzero applications with verified first-time prerequisites, current SDK guidance, and an automated local development loop.",
   "mcpServers": {
-    "fluxzero-docs": {
-      "httpUrl": "https://api.dashboard.fluxzero.io/mcp",
-      "timeout": 60000
-    },
     "fluxzero-dev": {
       "command": "fz",
       "args": [
-        "mcp",
-        "--ensure-dev"
+        "mcp"
       ],
       "timeout": 120000
     }

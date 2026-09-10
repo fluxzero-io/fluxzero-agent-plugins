@@ -37,7 +37,7 @@ test("canonical instructions document the complete environment prerequisite on e
     "git --version",
     "fz version",
     "fz mcp --help",
-    "--ensure-dev",
+    "start_dev",
     "fz init --help",
     "--in-place",
     "Java 25",
@@ -98,20 +98,22 @@ test("bare macOS onboarding has one explicit Command Line Tools boundary", async
   assert.doesNotMatch(readme, /archive\/refs\/heads\/main|main\.zip/);
 });
 
-test("Codex onboarding verifies installation and defers one activation boundary", async () => {
+test("Codex onboarding verifies installation before its first-install fork or environment relaunch", async () => {
   const readme = await readFile(path.join(root, "README.md"), "utf8");
   const marketplace = readme.indexOf("codex plugin marketplace add fluxzero-io/fluxzero-agent-plugins");
   const install = readme.indexOf("codex plugin add fluxzero@fluxzero", marketplace);
   const list = readme.indexOf("codex plugin list --json", install);
   const readiness = readme.indexOf("### Verify readiness, then activate once", list);
-  const relaunch = readme.indexOf("completely quit\nand relaunch Codex/ChatGPT", readiness);
+  const fork = readme.indexOf("`fork_thread`", readiness);
+  const relaunch = readme.indexOf("completely quit and relaunch", readiness);
   assert.ok(marketplace >= 0);
   assert.ok(install > marketplace);
   assert.ok(list > install);
   assert.ok(readiness > list);
+  assert.ok(fork > readiness);
   assert.ok(relaunch > readiness);
   assert.match(readme, /installed and enabled/);
-  assert.match(readme, /A new task inside an already-running macOS Codex process is not enough/);
+  assert.match(readme, /fork does not refresh the\s+environment of an already-running application/);
 });
 
 test("macOS onboarding proves persistent CLI and GUI process visibility", async () => {
@@ -126,7 +128,7 @@ test("macOS onboarding proves persistent CLI and GUI process visibility", async 
   assert.match(readme, /affects only applications launched afterward/);
 });
 
-test("activation requires both MCP surfaces before application work", async () => {
+test("activation requires local documentation and status before application work", async () => {
   const files = [
     "README.md",
     "skills/build-fluxzero-app/SKILL.md",
@@ -134,7 +136,7 @@ test("activation requires both MCP surfaces before application work", async () =
   ];
   for (const file of files) {
     const content = await readFile(path.join(root, file), "utf8");
-    for (const instruction of ["fluxzero-docs", "docs_start", "fluxzero-dev"]) {
+    for (const instruction of ["docs_start", "fluxzero-dev"]) {
       assert.ok(content.includes(instruction), `${file} must require ${instruction}`);
     }
     assert.match(content, /(?:Do not|Never|never) (?:claim readiness|equate|substitute|bypass)/);
@@ -214,8 +216,7 @@ test("canonical instructions define the complete version-aware authority map", a
     "project-instructions/AGENTS.md",
   ];
   const requiredSources = [
-    "fluxzero-docs",
-    ".fluxzero/agents",
+        ".fluxzero/agents",
     "Maven or Gradle",
     "https://github.com/fluxzero-io/fluxzero-sdk-java",
     "release tag",
@@ -273,9 +274,9 @@ test("agent workflow keeps one writer per feature slice", async () => {
   }
 });
 
-test("all adapters expose separate documentation and development MCP servers", async () => {
+test("all adapters start one local MCP without implicitly starting a project", async () => {
   const config = JSON.parse(await readFile(path.join(root, "plugins.config.json"), "utf8"));
-  assert.deepEqual(config.devMcpArgs, ["mcp", "--ensure-dev"]);
+  assert.deepEqual(config.devMcpArgs, ["mcp"]);
   const paths = [
     "plugins/fluxzero/.mcp.json",
     "adapters/claude/fluxzero/.mcp.json",
@@ -284,12 +285,21 @@ test("all adapters expose separate documentation and development MCP servers", a
   ];
   for (const mcpPath of paths) {
     const value = JSON.parse(await readFile(path.join(root, mcpPath), "utf8"));
-    assert.equal(value.mcpServers["fluxzero-docs"].url, config.mcpUrl);
+    assert.deepEqual(Object.keys(value.mcpServers), ["fluxzero-dev"]);
     assert.equal(value.mcpServers["fluxzero-dev"].command, config.devMcpCommand);
     assert.deepEqual(value.mcpServers["fluxzero-dev"].args, config.devMcpArgs);
   }
   const gemini = JSON.parse(await readFile(path.join(root, "gemini-extension.json"), "utf8"));
-  assert.equal(gemini.mcpServers["fluxzero-docs"].httpUrl, config.mcpUrl);
+  assert.deepEqual(Object.keys(gemini.mcpServers), ["fluxzero-dev"]);
   assert.equal(gemini.mcpServers["fluxzero-dev"].command, config.devMcpCommand);
   assert.deepEqual(gemini.mcpServers["fluxzero-dev"].args, config.devMcpArgs);
+});
+
+
+test("plugin development startup uses MCP instead of a CLI bootstrap", async () => {
+  for (const file of ["README.md", "skills/build-fluxzero-app/SKILL.md", "project-instructions/AGENTS.md"]) {
+    const content = await readFile(path.join(root, file), "utf8");
+    assert.match(content, /start_dev/);
+    assert.doesNotMatch(content, /--ensure-dev|stdin closed|closed stdin/);
+  }
 });

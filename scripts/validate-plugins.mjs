@@ -37,9 +37,8 @@ if (!/^[0-9]+\.[0-9]+\.[0-9]+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$/.test(co
 }
 assertEqual(packageJson.version, config.version, "package and plugin version");
 if (!config.repository.startsWith("https://github.com/fluxzero-io/")) fail("repository must use the Fluxzero GitHub organization");
-if (!config.mcpUrl.startsWith("https://")) fail("MCP URL must use HTTPS");
 assertEqual(config.devMcpCommand, "fz", "development MCP command");
-assertEqual(config.devMcpArgs, ["mcp", "--ensure-dev"], "development MCP arguments");
+assertEqual(config.devMcpArgs, ["mcp"], "development MCP arguments");
 
 const canonicalSkill = await readFile(path.join(root, "skills/build-fluxzero-app/SKILL.md"), "utf8");
 const skillCopies = [
@@ -89,34 +88,25 @@ const cursorMcp = (await readJson("adapters/cursor/fluxzero/mcp.json")).mcpServe
 const copilotMcp = (await readJson("adapters/copilot/fluxzero/.mcp.json")).mcpServers;
 const gemini = await readJson("gemini-extension.json");
 
-assertEqual(codexMcp["fluxzero-docs"].url, config.mcpUrl, "Codex docs MCP URL");
-assertEqual(codexMcp["fluxzero-docs"].required, true, "Codex docs MCP required flag");
 assertEqual(codexMcp["fluxzero-dev"].command, config.devMcpCommand, "Codex dev MCP command");
 assertEqual(codexMcp["fluxzero-dev"].args, config.devMcpArgs, "Codex dev MCP arguments");
-assertEqual(
-  claudeMcp["fluxzero-docs"],
-  { type: "http", url: config.mcpUrl },
-  "Claude docs MCP configuration",
-);
 assertEqual(
   claudeMcp["fluxzero-dev"],
   { type: "stdio", command: config.devMcpCommand, args: config.devMcpArgs },
   "Claude dev MCP configuration",
 );
-assertEqual(cursorMcp["fluxzero-docs"], { url: config.mcpUrl }, "Cursor docs MCP configuration");
 assertEqual(cursorMcp["fluxzero-dev"], { command: config.devMcpCommand, args: config.devMcpArgs }, "Cursor dev MCP configuration");
-assertEqual(
-  copilotMcp["fluxzero-docs"],
-  { type: "http", url: config.mcpUrl, tools: ["*"], deferTools: "auto" },
-  "Copilot docs MCP configuration",
-);
 assertEqual(copilotMcp["fluxzero-dev"].command, config.devMcpCommand, "Copilot dev MCP command");
 assertEqual(copilotMcp["fluxzero-dev"].args, config.devMcpArgs, "Copilot dev MCP arguments");
 assertEqual(gemini.name, config.name, "Gemini extension name");
 assertEqual(gemini.version, config.version, "Gemini extension version");
-assertEqual(gemini.mcpServers["fluxzero-docs"].httpUrl, config.mcpUrl, "Gemini docs MCP URL");
 assertEqual(gemini.mcpServers["fluxzero-dev"].command, config.devMcpCommand, "Gemini dev MCP command");
 assertEqual(gemini.mcpServers["fluxzero-dev"].args, config.devMcpArgs, "Gemini dev MCP arguments");
+
+for (const servers of [codexMcp, claudeMcp, cursorMcp, copilotMcp, gemini.mcpServers]) {
+  assertEqual(Object.keys(servers), ["fluxzero-dev"], "one local MCP for documentation and development");
+}
+assertEqual(codexMcp["fluxzero-dev"].required, true, "local documentation MCP required flag");
 
 const marketplaces = {
   codex: [".agents/plugins/marketplace.json", "./plugins/fluxzero"],

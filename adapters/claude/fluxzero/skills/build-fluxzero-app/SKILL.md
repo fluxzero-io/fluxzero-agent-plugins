@@ -15,7 +15,21 @@ business behavior.
 
 ## Environment Readiness
 
-Treat Git, the Fluxzero CLI, Java 25, and both bundled MCP servers as hard
+Remember whether Fluxzero was installed before onboarding, using the agent's
+native plugin listing. Only after installing a previously absent plugin and
+finishing prerequisites, tell the user that you will fork this conversation to
+load it. Use the available native conversation-fork tool yourself (`fork_thread`
+in Codex), retaining the directory and checkout. Send the fork the current brief,
+decisions, completed setup, and next step; the unfinished turn may not be copied.
+The fork must verify this skill and the MCP calls below, then continue without
+reinstalling or forking again. Stop application work in the original task; show
+the created fork and offer to close/archive the original, without automatically
+closing it. Never trigger this handoff for an already installed plugin or an
+update. If no native fork tool is available, use the agent's supported activation
+route. A macOS process with a stale inherited `PATH` still needs a full relaunch;
+a fork alone cannot repair that environment.
+
+Treat Git, the Fluxzero CLI, Java 25, and the bundled local MCP server as hard
 prerequisites. Verify them before inspecting or changing an application. A
 successful plugin command alone is not readiness, and a missing tool is not
 permission to bypass the supported workflow.
@@ -36,7 +50,7 @@ or Java install while the Apple dialog is open. After the user returns, repeat
 both checks before requiring `git --version`. On other platforms, require
 `git --version` directly.
 
-The bundled `fluxzero-dev` server invokes `fz mcp --ensure-dev`. If `fz version` is unavailable, install the
+The bundled `fluxzero-dev` server invokes `fz mcp`. If `fz version` is unavailable, install the
 latest native CLI for the current system:
 
 - **macOS or Linux with Homebrew:**
@@ -63,7 +77,7 @@ env -i HOME="$HOME" USER="$USER" LOGNAME="$LOGNAME" SHELL=/bin/zsh \
   /bin/zsh -l -c 'command -v fz && fz version && fz mcp --help && fz init --help'
 ```
 
-Require MCP help to list `--ensure-dev`, and init help to list `--in-place`.
+Require MCP help to succeed, init help to list `--in-place`, and the activated MCP to expose `start_dev`.
 On macOS, also ensure that the directory containing `fz`
 is present in the launchd `PATH` inherited by a subsequently launched
 coding-agent process. A shell alias or a change visible only in the bootstrap
@@ -97,33 +111,35 @@ from the intended repository/worktree or pass `--project-dir` as documented by
 reloading the same wrong directory will not help. After reconnecting, verify
 the selected root with `get_status`.
 
-Finally, call `docs_start` through `fluxzero-docs` and complete a `get_status`
+Finally, call `docs_start` through `fluxzero-dev` and complete a `get_status`
 call through `fluxzero-dev`. Merely seeing a configured server or advertised
 tool is not readiness. The status call must also succeed in an empty workspace
 before a project exists and report that workspace as
-`session.projectDirectory`. If an installed plugin or a changed `PATH` is not
-active in this process, tell the user the one native reload or restart needed
-and stop. After activation, repeat the completed calls instead of assuming they
+`projectDirectory` when no dev server is running, or `session.projectDirectory` when active.
+`dev-server-not-running` is valid for documentation bootstrap. If an installed plugin or a changed `PATH` is not
+active in this process, apply the first-install handoff above when applicable;
+otherwise use the supported reload or restart. Tell the user the one manual
+action needed only if you cannot perform that activation yourself, then stop.
+After activation, repeat the completed calls instead of assuming they
 worked. Do not claim readiness or build with duplicate wrapper processes while
-either MCP surface is absent.
+the MCP surface is absent.
 
 ## Authoritative Sources
 
 Use each source only for the information it owns:
 
 - **This plugin:** stable CLI installation, agent workflow, and the division of
-  responsibilities between the documentation and development MCP servers. It
+  responsibilities between local documentation and the project environment. It
   deliberately does not catalog evolving SDK, CLI, or dev-server capabilities.
 - **The effective Maven or Gradle model:** the SDK version and build
   configuration actually used by the project. Never infer or pin an SDK version
   from this plugin.
-- **`fluxzero-docs`:** current SDK concepts, APIs, and framework guidance.
-  Compare the `sdkVersion` advertised by `docs_start` with the effective project
-  version before applying version-sensitive guidance.
-- **`.fluxzero/agents`:** SDK manuals synchronized from the GitHub release that
-  exactly matches the project's detected SDK version. Use these for
-  version-specific project guidance; do not replace them with hand-maintained
-  copies.
+- **The `docs_*` tools on `fluxzero-dev`:** SDK concepts and APIs for an explicit
+  version, the detected project SDK, or the latest release before a project exists.
+  Preserve returned `namespace` and `version` in subsequent reads. The shared cache
+  supports offline retrieval after the matching archive has been downloaded.
+- **`.fluxzero/agents`:** legacy synchronized manuals in older projects. Preserve
+  existing files, but use versioned MCP retrieval as the default documentation route.
 - **The installed `fz` CLI:** its current commands and the dev-server version it
   resolves for the project. Run `fz --help` when choosing a command. Run `fz dev --help`
   for exact development actions and options. Run `fz dev config` before creating
@@ -148,7 +164,7 @@ installed command output ever differ, the command output wins.
      Fluxzero incrementally using the project-setup docs. Do not replace the
      project with a generated starter unless the user explicitly requests a
      separate replacement application.
-2. Use the bundled `fluxzero-docs` MCP server before making framework-level
+2. Use the bundled `fluxzero-dev` MCP server before making framework-level
    decisions. Start with the docs root/start tool when it is available.
 3. Treat a successfully read documentation article as stable for this task.
    Remember its URL and reuse its guidance instead of rereading it. Reread only
@@ -157,25 +173,20 @@ installed command output ever differ, the command output wins.
 4. Extract the framework topics from the task and search for each topic before
    traversing broad sections. Read focused results first, then follow links only
    for missing detail; do not read the whole graph before implementation.
-5. Only for a new or empty target, follow the MCP project-setup guidance for the
-   chosen build tool and language. Capture the empty-workspace dev status and
-   cursor as described below, then use `fz init --in-place` with the Java or
-   Kotlin starter template so generation occurs in that exact watched root.
-   Prefer non-interactive flags when the product brief determines the answers.
-   Never create and move a named child project, and never use initialization to
-   repair an existing project.
+5. Only for a new or empty target, follow MCP project-setup guidance for the
+   chosen build tool and language. Confirm the directory with `get_status`, then
+   use `fz init --in-place` with the Java or Kotlin starter in that exact root.
+   Prefer non-interactive flags when the brief determines the answers. Never create
+   and move a named child project or initialize over an existing project.
 6. For an existing project, detect the build tool and current Fluxzero SDK from
    its effective Maven or Gradle model before changing dependencies. Read the
    matching MCP setup article and make the smallest compatible build change.
-7. When `docs_start` advertises `sdkVersion`, compare it with the project's
-   Fluxzero SDK version. When they differ, use the synchronized
-   `.fluxzero/agents` manuals for version-sensitive project guidance and use
-   `fluxzero-docs` only for concepts that apply to the detected version. Do not
-   upgrade or downgrade a project merely to align it with the documentation
-   server. Upgrade only when the user requests it or the task requires a newer
-   capability, and then inspect the intervening migration notes before editing.
-   If metadata is unavailable, do not invent a version: use the MCP
-   project-setup guidance and Maven Central release metadata.
+7. Compare the `version` returned by `docs_start` with the project's SDK.
+   A mismatch does not justify an SDK upgrade or downgrade. Select the matching
+   version explicitly when necessary, preserving `namespace` and `version` in
+   links and reads. If its artifact is missing, report that limitation instead
+   of silently using another release. Before project generation, the latest
+   published SDK is the fallback; the response identifies the concrete version.
 8. Treat generated code as a starting point. Replace its generic package,
    example domain, endpoints, dependencies, and tests as required by the actual
    product brief; do not mistake successful generation for task completion.
@@ -186,10 +197,14 @@ installed command output ever differ, the command output wins.
 
 ## Development Feedback Loop
 
-Use the bundled `fluxzero-dev` MCP server as the owner of the local development
-environment. Its `fz mcp --ensure-dev` transport exposes the
-control plane before a greenfield project exists, starts one background
-environment when needed, and reuses the active workspace session.
+The bundled `fluxzero-dev` MCP server starts with `fz mcp`. Documentation and
+`get_status` work without a project environment. When `get_status` returns
+`dev-server-not-running` or `dev-server-unavailable`, call `start_dev` with no arguments
+on this same MCP connection when development is needed. It starts or reuses the background
+project environment; directory validation remains in force. If it reports `dev-server-starting`,
+poll `get_status` until a session is available. On `dev-server-start-failed`, inspect the startup
+diagnostics, correct the cause and retry `start_dev`. Fetch a fresh status and cursor before
+waiting for project events. Status and documentation calls never start development themselves.
 
 The active dev environment exclusively owns source watching, compilation,
 application and local support-service replacement, configured startup commands,
@@ -232,21 +247,17 @@ For each implementation iteration:
 
 ### Empty-target initialization
 
-When the dev control plane starts before a new project exists:
-
-1. Call `get_status` while the target has no build and retain its session ID and
-   cursor. Confirm that `session.projectDirectory` is the intended target.
-2. Run `fz init --in-place` in that exact target without replacing the MCP
-   transport. Do not accept the default named-child layout and move it later.
-3. Call `wait_for_change` with the pre-initialization cursor. Advance through
-   every returned cursor until project discovery and all startup, compile, and
-   test work caused by initialization reaches a terminal state.
-4. Corroborate the result with fresh `get_status`, `get_test_status`, and
-   `get_active_problems` calls.
-
-Keep the same bridge and session throughout this transition. Do not reconnect,
-restart the MCP server, or start another task merely to make the generated
-project visible.
+1. Call `get_status` and confirm the intended directory, even if it reports
+   `dev-server-not-running`. Use the docs tools before generation.
+2. Run `fz init --in-place` in that exact empty target. Do not accept the default
+   named-child layout and move it later.
+3. If no project environment is running, call `start_dev` on the same connection.
+   Poll `get_status` while startup is in progress and obtain a fresh session cursor.
+   If a greenfield environment was already active, retain its pre-initialization
+   cursor and session instead; generation does not require reconnecting it.
+4. Follow `wait_for_change` until project discovery, startup, compile and test work
+   reach terminal states. Corroborate with `get_status`, `get_test_status` and
+   `get_active_problems`.
 
 Direct wrapper commands are not a second verification loop. Use one only when
 the dev environment explicitly reports that verification is unmanaged or the
