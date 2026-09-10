@@ -1,19 +1,11 @@
 {
   "mcpServers": {
-    "fluxzero-docs": {
-      "url": "https://api.dashboard.fluxzero.io/mcp",
-      "required": true,
-      "startup_timeout_sec": 10,
-      "tool_timeout_sec": 60,
-      "default_tools_approval_mode": "approve"
-    },
     "fluxzero-dev": {
       "command": "fz",
       "args": [
-        "mcp",
-        "--ensure-dev"
+        "mcp"
       ],
-      "required": false,
+      "required": true,
       "startup_timeout_sec": 120,
       "tool_timeout_sec": 120,
       "default_tools_approval_mode": "approve"

@@ -103,16 +103,9 @@ const outputs = new Map([
     "plugins/fluxzero/.mcp.json",
     json({
       mcpServers: {
-        "fluxzero-docs": {
-          url: config.mcpUrl,
-          required: true,
-          startup_timeout_sec: 10,
-          tool_timeout_sec: 60,
-          default_tools_approval_mode: "approve",
-        },
         "fluxzero-dev": {
           ...devMcp,
-          required: false,
+          required: true,
           startup_timeout_sec: 120,
           tool_timeout_sec: 120,
           default_tools_approval_mode: "approve",
@@ -124,10 +117,6 @@ const outputs = new Map([
     "adapters/claude/fluxzero/.mcp.json",
     json({
       mcpServers: {
-        "fluxzero-docs": {
-          type: "http",
-          url: config.mcpUrl,
-        },
         "fluxzero-dev": {
           type: "stdio",
           ...devMcp,
@@ -139,9 +128,6 @@ const outputs = new Map([
     "adapters/cursor/fluxzero/mcp.json",
     json({
       mcpServers: {
-        "fluxzero-docs": {
-          url: config.mcpUrl,
-        },
         "fluxzero-dev": devMcp,
       },
     }),
@@ -150,12 +136,6 @@ const outputs = new Map([
     "adapters/copilot/fluxzero/.mcp.json",
     json({
       mcpServers: {
-        "fluxzero-docs": {
-          type: "http",
-          url: config.mcpUrl,
-          tools: ["*"],
-          deferTools: "auto",
-        },
         "fluxzero-dev": {
           type: "stdio",
           ...devMcp,
@@ -257,10 +237,6 @@ const outputs = new Map([
       version: config.version,
       description: config.description,
       mcpServers: {
-        "fluxzero-docs": {
-          httpUrl: config.mcpUrl,
-          timeout: 60000,
-        },
         "fluxzero-dev": {
           ...devMcp,
           timeout: 120000,

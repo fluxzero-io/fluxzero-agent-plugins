@@ -2,8 +2,7 @@
 
 This repository distributes Fluxzero plugins for Codex, Claude Code, Cursor,
 and GitHub Copilot, plus the equivalent Gemini CLI extension. Every package
-contains the same application-building skill and configures the production
-Fluxzero MCP documentation server and automated local-development server.
+contains the same application-building skill and configures one local MCP server for versioned documentation and development feedback.
 Install the package for your coding agent once; projects do not need
 hand-maintained Fluxzero manuals or duplicate MCP registrations.
 
@@ -44,7 +43,7 @@ using a Git-backed marketplace or extension command.
 
 ### Fluxzero CLI prerequisite
 
-The local-development MCP server runs `fz mcp --ensure-dev`, so
+The local MCP server runs `fz mcp`, so
 the Fluxzero CLI must be installed and available on the coding agent's `PATH`.
 Verify this before starting application work:
 
@@ -88,9 +87,9 @@ env -i HOME="$HOME" USER="$USER" LOGNAME="$LOGNAME" SHELL=/bin/zsh \
   /bin/zsh -l -c 'command -v fz && fz version && fz mcp --help && fz init --help'
 ```
 
-The MCP help must list `--ensure-dev`, and the init help must list `--in-place`.
-These are the command surfaces the plugin uses to
-keep one dev session alive while a new project is created in its watched root.
+MCP help must succeed, and init help must list `--in-place`. After activation, require `start_dev` in the MCP tool catalogue.
+The default MCP connection serves documentation without starting a project environment.
+The `start_dev` MCP tool explicitly starts or reuses that environment when development is needed.
 
 macOS GUI applications do not read `.zprofile`. Publish the verified CLI
 directory to processes launched later in the current login session while
@@ -150,21 +149,19 @@ Version-sensitive knowledge stays with the component that owns it:
 |:------------|:---------------------|
 | CLI installation and agent workflow | This plugin |
 | SDK version used by a project | Its effective Maven or Gradle model |
-| Current SDK concepts and APIs | The `fluxzero-docs` MCP server |
-| SDK guidance for the detected project version | CLI-synchronized `.fluxzero/agents` manuals from the matching SDK release |
+| SDK concepts and APIs for the selected version | The `docs_*` tools on `fluxzero-dev` |
 | Current CLI commands | `fz --help` |
 | Current dev actions and options | `fz dev --help` |
 | `.fluxzero/dev.yaml` schema and defaults | `fz dev config` |
 | SDK implementation details when manuals are insufficient | The matching release tag in `https://github.com/fluxzero-io/fluxzero-sdk-java`, never `main` |
 
-Agents compare the SDK version advertised by `fluxzero-docs` with the effective
-project version before applying version-sensitive guidance. A mismatch does not
-by itself justify changing the project: version-specific guidance comes from
-the synchronized `.fluxzero/agents` manuals, and an SDK upgrade happens only on
-request or when a required capability demands it. Agents inspect existing
-project configuration and command output instead of copying option or YAML
-catalogs into the plugin. When plugin wording and command output differ, command
-output wins.
+Documentation selection uses an explicit version, otherwise the detected project SDK,
+otherwise the latest published release. Preserve the returned `namespace` and `version`
+in subsequent reads. A version mismatch does not justify changing the project or an
+SDK upgrade. Missing artifacts remain visible; do not switch to another SDK's docs.
+Existing `.fluxzero/agents` files are legacy synchronized manuals, not the default
+retrieval route. Agents inspect existing project configuration and command output;
+when guidance differs, command output wins.
 
 Every package provides the same workflow:
 
@@ -177,21 +174,21 @@ Every package provides the same workflow:
   coherent edit
 - implement and test a real Fluxzero application rather than a generic service
 
-The two servers have deliberately separate names and responsibilities:
+`fluxzero-dev` runs `fz mcp` in the selected workspace. Its `docs_*` tools use
+versioned archives in the shared local cache; warm cached documentation works offline.
+The same MCP interface forwards project status, problems, logs and test feedback once
+a dev environment is running. Documentation alone opens no project server or watcher.
 
-- `fluxzero-docs` serves stable framework guidance over HTTP.
-- `fluxzero-dev` runs `fz mcp --ensure-dev` in the current
-  workspace. It exposes the control plane before a greenfield project exists,
-  then reuses the same background environment for current problems, bounded
-  logs, test status, and a cursored development event stream.
-
-For a new workspace, complete a `get_status` call before initialization and
-retain its session ID and cursor. Generate the starter directly into that exact
-watched root with `fz init --in-place`; do not create and move a named child
-project. Continue from the pre-initialization cursor with `wait_for_change`
-until project discovery, compilation, startup, and tests caused by generation
-reach terminal states, then corroborate them with fresh status, test-status,
-and active-problem calls.
+For a new or empty workspace, complete a `get_status` call and confirm its
+`projectDirectory`. `dev-server-not-running` is a valid bootstrap status.
+Generate directly there with `fz init --in-place`; do not create and move a named child
+project. When development is needed, call `start_dev` with no arguments on the same MCP
+connection. It starts or reuses one background environment, subject to the existing
+project/empty-workspace checks. Poll `get_status` while `dev-server-starting`; if startup
+fails, inspect diagnostics, correct the cause and retry `start_dev`.
+Then obtain a fresh status cursor and follow `wait_for_change` through startup and
+verification. If a greenfield environment was already running, preserve its
+pre-initialization cursor and the same session through generation.
 
 When `fluxzero-dev` is active, agents must not run duplicate wrapper tests,
 applications, watchers, or continuous log commands. Project wrappers remain
@@ -205,6 +202,11 @@ Keep one writer per feature slice so parallel agents do not edit the same files
 from different snapshots.
 
 ## Install
+
+Before installing, check the agent's native plugin or extension listing and
+remember whether Fluxzero was already installed. Reuse an existing installation;
+the first-install fork below applies only when this onboarding actually installs
+a previously absent plugin, not to an update, reconnect, or missing MCP tool.
 
 ### Codex
 
@@ -268,8 +270,8 @@ restarting the coding agent. Require all of the following evidence:
 
 - the native plugin or extension listing shows Fluxzero installed and enabled
 - `git --version` succeeds
-- the clean login-shell probe above resolves `fz`, `fz mcp --help` lists
-  `--ensure-dev`, and `fz init --help` lists `--in-place`
+- the clean login-shell probe above resolves `fz`, `fz mcp --help` succeeds, the activated MCP exposes
+  `start_dev`, and `fz init --help` lists `--in-place`
 - Fluxzero development readiness succeeds; if Java 25 was initially missing,
   the agent installed it and retried the original command, obtaining separate
   approval only when the execution environment required it
@@ -279,14 +281,32 @@ Do not equate a successful marketplace command, archive download, or
 interactive-shell check with readiness. Do not ask for application requirements
 while any item is missing.
 
-Only after every check passes, cross one activation boundary: completely quit
-and relaunch Codex/ChatGPT on macOS, run `/reload-plugins` or start a new Claude
-Code session, reload Cursor, restart Gemini CLI, or start a new Copilot CLI
-session. A new task inside an already-running macOS Codex process is not enough
-after changing its inherited `PATH`.
+Only after every check passes, activate the plugin. If Fluxzero was absent at
+the start and has now been installed, tell the user that you will fork the
+current conversation so the new task can load the plugin and retain the brief.
+Use the agent's available native conversation-fork tool yourself, preserving
+the current directory and checkout. This is a conversation fork, not a new Git
+branch or worktree. In Codex, use `fork_thread` when available. Create one fork
+and send it a continuation containing the user's request, decisions, current
+directory, completed setup, and next step; an unfinished turn may not be copied.
+Tell the fork that installation is complete and that it must verify the skill
+and MCP calls below before continuing, without reinstalling or forking again.
+Stop application work in the original task to avoid two writers. Once the fork
+exists, show the user where to continue and offer to close/archive the original
+task; do not close it automatically or claim the plugin works before verification.
+
+Do not fork merely because a previously installed plugin is unavailable in this
+session. If the agent has no callable native fork operation, use its supported
+activation route and carry the brief forward: `/reload-plugins` or a new Claude
+Code session, a Cursor reload, a Gemini CLI restart, or a new Copilot CLI session.
+For Codex without a callable fork tool, explain the native action needed to
+continue in a fresh task. If a macOS agent still has the old inherited `PATH`,
+completely quit and relaunch it first; a conversation fork does not refresh the
+environment of an already-running application. Ask for a manual action only
+when the agent cannot perform that required activation itself.
 
 In the first activated task, confirm that the `build-fluxzero-app` skill is
-available, call `docs_start` through `fluxzero-docs`, and complete a
+available, call `docs_start` through `fluxzero-dev`, and complete a
 `get_status` call through `fluxzero-dev` before application work. Merely seeing
 the development server in configuration or a tool catalogue is not readiness.
 In an empty workspace, the status call must still succeed and identify that
