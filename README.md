@@ -45,6 +45,9 @@ using a Git-backed marketplace or extension command.
 
 The local MCP server runs `fz mcp`, so
 the Fluxzero CLI must be installed and available on the coding agent's `PATH`.
+The Codex MCP entry permits task startup while these prerequisites are still missing,
+so onboarding can resume after an operating-system confirmation. This does not relax
+the readiness checks required before application work.
 Verify this before starting application work:
 
 ```bash
