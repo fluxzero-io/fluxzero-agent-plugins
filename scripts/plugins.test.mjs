@@ -14,23 +14,32 @@ test("generated adapters are current", async () => {
   assert.match(stdout, /current/);
 });
 
-test("every packaged agent receives the exact canonical skill", async () => {
-  const canonical = await readFile(path.join(root, "skills/build-fluxzero-app/SKILL.md"));
-  const copies = [
-    "plugins/fluxzero/skills/build-fluxzero-app/SKILL.md",
+test("only Codex receives the fork workflow; all agents retain shared readiness", async () => {
+  const common = await readFile(path.join(root, "skills/build-fluxzero-app/common.md"), "utf8");
+  assert.doesNotMatch(common, /fork_thread|fork the conversation/);
+  const codex = await readFile(path.join(root, "plugins/fluxzero/skills/build-fluxzero-app/SKILL.md"), "utf8");
+  const supplement = await readFile(path.join(root, "plugins/fluxzero/instructions.md"), "utf8");
+  assert.ok(codex.startsWith(common.trimEnd()));
+  assert.ok(codex.endsWith(supplement));
+  assert.match(codex, /fork_thread/);
+  for (const file of [
     "adapters/claude/fluxzero/skills/build-fluxzero-app/SKILL.md",
     "adapters/cursor/fluxzero/skills/build-fluxzero-app/SKILL.md",
     "adapters/copilot/fluxzero/skills/build-fluxzero-app/SKILL.md",
-  ];
-  for (const copy of copies) {
-    assert.deepEqual(await readFile(path.join(root, copy)), canonical);
+    "skills/build-fluxzero-app/SKILL.md",
+  ]) {
+    const content = await readFile(path.join(root, file), "utf8");
+    assert.equal(content, common);
+    assert.doesNotMatch(content, /fork_thread|## Codex activation/);
   }
+  const agents = await readFile(path.join(root, "project-instructions/AGENTS.md"), "utf8");
+  assert.doesNotMatch(agents, /fork_thread|fork the conversation/);
 });
 
 test("canonical instructions document the complete environment prerequisite on every platform", async () => {
   const files = [
     "README.md",
-    "skills/build-fluxzero-app/SKILL.md",
+    "skills/build-fluxzero-app/common.md",
     "project-instructions/AGENTS.md",
   ];
   const requiredInstructions = [
@@ -59,7 +68,7 @@ test("canonical instructions document the complete environment prerequisite on e
 test("agents install Java autonomously unless the environment requires approval", async () => {
   const files = [
     "README.md",
-    "skills/build-fluxzero-app/SKILL.md",
+    "skills/build-fluxzero-app/common.md",
     "project-instructions/AGENTS.md",
   ];
   for (const file of files) {
@@ -76,7 +85,7 @@ test("agents install Java autonomously unless the environment requires approval"
 test("bare macOS onboarding has one explicit Command Line Tools boundary", async () => {
   const files = [
     "README.md",
-    "skills/build-fluxzero-app/SKILL.md",
+    "skills/build-fluxzero-app/common.md",
     "project-instructions/AGENTS.md",
   ];
 
@@ -104,16 +113,14 @@ test("Codex onboarding verifies installation before its first-install fork or en
   const install = readme.indexOf("codex plugin add fluxzero@fluxzero", marketplace);
   const list = readme.indexOf("codex plugin list --json", install);
   const readiness = readme.indexOf("### Verify readiness, then activate once", list);
-  const fork = readme.indexOf("`fork_thread`", readiness);
-  const relaunch = readme.indexOf("completely quit and relaunch", readiness);
+  const activation = readme.indexOf("plugins/fluxzero/instructions.md", readiness);
   assert.ok(marketplace >= 0);
   assert.ok(install > marketplace);
   assert.ok(list > install);
   assert.ok(readiness > list);
-  assert.ok(fork > readiness);
-  assert.ok(relaunch > readiness);
+  assert.ok(activation > readiness);
   assert.match(readme, /installed and enabled/);
-  assert.match(readme, /fork does not refresh the\s+environment of an already-running application/);
+
 });
 
 test("macOS onboarding proves persistent CLI and GUI process visibility", async () => {
@@ -131,7 +138,7 @@ test("macOS onboarding proves persistent CLI and GUI process visibility", async 
 test("activation requires local documentation and status before application work", async () => {
   const files = [
     "README.md",
-    "skills/build-fluxzero-app/SKILL.md",
+    "skills/build-fluxzero-app/common.md",
     "project-instructions/AGENTS.md",
   ];
   for (const file of files) {
@@ -146,7 +153,7 @@ test("activation requires local documentation and status before application work
 test("activation proves the development MCP with a completed empty-workspace status call", async () => {
   const files = [
     "README.md",
-    "skills/build-fluxzero-app/SKILL.md",
+    "skills/build-fluxzero-app/common.md",
     "project-instructions/AGENTS.md",
   ];
   for (const file of files) {
@@ -158,7 +165,7 @@ test("activation proves the development MCP with a completed empty-workspace sta
 });
 
 test("greenfield workflow keeps one watched root and cursor through in-place generation", async () => {
-  const files = ["README.md", "skills/build-fluxzero-app/SKILL.md"];
+  const files = ["README.md", "skills/build-fluxzero-app/common.md"];
   for (const file of files) {
     const content = await readFile(path.join(root, file), "utf8");
     assert.ok(content.includes("fz init --in-place"), `${file} must use in-place initialization`);
@@ -182,7 +189,7 @@ test("the public onboarding prompt stays agent-neutral and two lines", async () 
 test("canonical instructions delegate evolving CLI and dev configuration to installed commands", async () => {
   const files = [
     "README.md",
-    "skills/build-fluxzero-app/SKILL.md",
+    "skills/build-fluxzero-app/common.md",
     "project-instructions/AGENTS.md",
   ];
   const authoritativeCommands = [
@@ -201,7 +208,7 @@ test("canonical instructions delegate evolving CLI and dev configuration to inst
 });
 
 test("canonical agent workflow follows startup through the early dev control plane", async () => {
-  const content = await readFile(path.join(root, "skills/build-fluxzero-app/SKILL.md"), "utf8");
+  const content = await readFile(path.join(root, "skills/build-fluxzero-app/common.md"), "utf8");
   assert.ok(content.includes("control plane can connect while"));
   assert.match(content, /call\s+`get_status`\s+immediately/);
   assert.match(content, /call\s+`get_active_problems`\s+immediately/);
@@ -212,7 +219,7 @@ test("canonical agent workflow follows startup through the early dev control pla
 test("canonical instructions define the complete version-aware authority map", async () => {
   const files = [
     "README.md",
-    "skills/build-fluxzero-app/SKILL.md",
+    "skills/build-fluxzero-app/common.md",
     "project-instructions/AGENTS.md",
   ];
   const requiredSources = [
@@ -234,7 +241,7 @@ test("canonical instructions define the complete version-aware authority map", a
 test("agents leave test selection and execution to the active Dev Server", async () => {
   const files = [
     "README.md",
-    "skills/build-fluxzero-app/SKILL.md",
+    "skills/build-fluxzero-app/common.md",
     "project-instructions/AGENTS.md",
   ];
   for (const file of files) {
@@ -252,7 +259,7 @@ test("agents leave test selection and execution to the active Dev Server", async
 test("documentation skew does not force an SDK migration", async () => {
   const files = [
     "README.md",
-    "skills/build-fluxzero-app/SKILL.md",
+    "skills/build-fluxzero-app/common.md",
     "project-instructions/AGENTS.md",
   ];
   for (const file of files) {
@@ -265,7 +272,7 @@ test("documentation skew does not force an SDK migration", async () => {
 test("agent workflow keeps one writer per feature slice", async () => {
   const files = [
     "README.md",
-    "skills/build-fluxzero-app/SKILL.md",
+    "skills/build-fluxzero-app/common.md",
     "project-instructions/AGENTS.md",
   ];
   for (const file of files) {
@@ -297,7 +304,7 @@ test("all adapters start one local MCP without implicitly starting a project", a
 
 
 test("plugin development startup uses MCP instead of a CLI bootstrap", async () => {
-  for (const file of ["README.md", "skills/build-fluxzero-app/SKILL.md", "project-instructions/AGENTS.md"]) {
+  for (const file of ["README.md", "skills/build-fluxzero-app/common.md", "project-instructions/AGENTS.md"]) {
     const content = await readFile(path.join(root, file), "utf8");
     assert.match(content, /start_dev/);
     assert.doesNotMatch(content, /--ensure-dev|stdin closed|closed stdin/);

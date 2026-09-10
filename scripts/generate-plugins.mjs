@@ -5,9 +5,11 @@ import path from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
 
+import { agentSkills, composeSkill } from "./agent-skills.mjs";
+
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const config = JSON.parse(await readFile(path.join(root, "plugins.config.json"), "utf8"));
-const skill = await readFile(path.join(root, "skills/build-fluxzero-app/SKILL.md"), "utf8");
+const skill = await readFile(path.join(root, "skills/build-fluxzero-app/common.md"), "utf8");
 const adapterPaths = {
   codex: "./plugins/fluxzero",
   claude: "./adapters/claude/fluxzero",
@@ -36,10 +38,9 @@ const devMcp = {
 };
 
 const outputs = new Map([
-  ["plugins/fluxzero/skills/build-fluxzero-app/SKILL.md", skill],
-  ["adapters/claude/fluxzero/skills/build-fluxzero-app/SKILL.md", skill],
-  ["adapters/cursor/fluxzero/skills/build-fluxzero-app/SKILL.md", skill],
-  ["adapters/copilot/fluxzero/skills/build-fluxzero-app/SKILL.md", skill],
+  ...await Promise.all(agentSkills.map(async ([source, target]) => [
+    target, composeSkill(skill, source ? await readFile(path.join(root, source), "utf8") : ""),
+  ])),
   [
     "plugins/fluxzero/.codex-plugin/plugin.json",
     json({

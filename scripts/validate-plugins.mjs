@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { agentSkills, composeSkill } from "./agent-skills.mjs";
 
 import { lstat, readdir, readFile } from "node:fs/promises";
 import path from "node:path";
@@ -40,16 +41,11 @@ if (!config.repository.startsWith("https://github.com/fluxzero-io/")) fail("repo
 assertEqual(config.devMcpCommand, "fz", "development MCP command");
 assertEqual(config.devMcpArgs, ["mcp"], "development MCP arguments");
 
-const canonicalSkill = await readFile(path.join(root, "skills/build-fluxzero-app/SKILL.md"), "utf8");
-const skillCopies = [
-  "plugins/fluxzero/skills/build-fluxzero-app/SKILL.md",
-  "adapters/claude/fluxzero/skills/build-fluxzero-app/SKILL.md",
-  "adapters/cursor/fluxzero/skills/build-fluxzero-app/SKILL.md",
-  "adapters/copilot/fluxzero/skills/build-fluxzero-app/SKILL.md",
-];
-for (const copyPath of skillCopies) {
-  const copy = await readFile(path.join(root, copyPath), "utf8");
-  if (canonicalSkill !== copy) fail(`${copyPath} differs from the canonical skill`);
+const canonicalSkill = await readFile(path.join(root, "skills/build-fluxzero-app/common.md"), "utf8");
+for (const [source, target] of agentSkills) {
+  const supplement = source ? await readFile(path.join(root, source), "utf8") : "";
+  const actual = await readFile(path.join(root, target), "utf8");
+  if (actual !== composeSkill(canonicalSkill, supplement)) fail(`${target} differs from its sources`);
 }
 
 const frontmatter = canonicalSkill.match(/^---\n([\s\S]*?)\n---\n/);

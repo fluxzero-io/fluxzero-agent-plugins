@@ -15,19 +15,11 @@ business behavior.
 
 ## Environment Readiness
 
-Remember whether Fluxzero was installed before onboarding, using the agent's
-native plugin listing. Only after installing a previously absent plugin and
-finishing prerequisites, tell the user that you will fork this conversation to
-load it. Use the available native conversation-fork tool yourself (`fork_thread`
-in Codex), retaining the directory and checkout. Send the fork the current brief,
-decisions, completed setup, and next step; the unfinished turn may not be copied.
-The fork must verify this skill and the MCP calls below, then continue without
-reinstalling or forking again. Stop application work in the original task; show
-the created fork and offer to close/archive the original, without automatically
-closing it. Never trigger this handoff for an already installed plugin or an
-update. If no native fork tool is available, use the agent's supported activation
-route. A macOS process with a stale inherited `PATH` still needs a full relaunch;
-a fork alone cannot repair that environment.
+Complete prerequisites before activating the plugin through this agent's
+supported activation mechanism. Follow any agent-specific instructions included
+below, then verify the skill and MCP calls before application work. Preserve the current directory, checkout,
+and user requirements across activation. A process with a stale inherited
+`PATH` needs a full relaunch before those checks can succeed.
 
 Treat Git, the Fluxzero CLI, Java 25, and the bundled local MCP server as hard
 prerequisites. Verify them before inspecting or changing an application. A
@@ -317,3 +309,15 @@ needs proof. Leave full regression verification to CI.
 
 If the result is not recognizably Fluxzero, repair it before answering. Do not
 present a generic app as complete.
+
+## Codex activation
+
+Check whether Fluxzero was installed before onboarding. Only after installing a
+previously absent plugin and completing prerequisites, fork the conversation
+with `fork_thread` when available, retaining the directory and checkout. Send
+the fork the user's request, decisions, completed setup, and next step; an
+unfinished turn may not be copied. The fork must verify the skill and MCP calls
+before continuing, without reinstalling or forking again. Stop application work
+in the original task, show the fork, and offer to archive the original without
+automatically closing it. Do not fork for an existing installation or update.
+If no fork tool is available, explain how to continue in a fresh Codex task.
