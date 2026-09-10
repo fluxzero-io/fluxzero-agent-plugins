@@ -173,8 +173,10 @@ installed command output ever differ, the command output wins.
 4. Extract the framework topics from the task and search for each topic before
    traversing broad sections. Read focused results first, then follow links only
    for missing detail; do not read the whole graph before implementation.
-5. Only for a new or empty target, follow MCP project-setup guidance for the
-   chosen build tool and language. Confirm the directory with `get_status`, then
+5. Only for a new or empty target, verify that the installed CLI is the current
+   stable release and run `fz upgrade` if it is older, before generating anything.
+   This updates the bundled starter SDK; it does not upgrade existing projects.
+   Then follow MCP project-setup guidance for the chosen build tool and language. Confirm the directory with `get_status`, then
    use `fz init --in-place` with the Java or Kotlin starter in that exact root.
    Prefer non-interactive flags when the brief determines the answers. Never create
    and move a named child project or initialize over an existing project.
