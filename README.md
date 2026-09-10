@@ -2,7 +2,7 @@
 
 This repository distributes Fluxzero plugins for Codex, Claude Code, Cursor,
 and GitHub Copilot, plus the equivalent Gemini CLI extension. Every package
-contains the same application-building skill and configures one local MCP server for versioned documentation and development feedback.
+contains the shared application-building workflow with an optional agent-specific activation supplement and configures one local MCP server for versioned documentation and development feedback.
 Install the package for your coding agent once; projects do not need
 hand-maintained Fluxzero manuals or duplicate MCP registrations.
 
@@ -284,29 +284,14 @@ Do not equate a successful marketplace command, archive download, or
 interactive-shell check with readiness. Do not ask for application requirements
 while any item is missing.
 
-Only after every check passes, activate the plugin. If Fluxzero was absent at
-the start and has now been installed, tell the user that you will fork the
-current conversation so the new task can load the plugin and retain the brief.
-Use the agent's available native conversation-fork tool yourself, preserving
-the current directory and checkout. This is a conversation fork, not a new Git
-branch or worktree. In Codex, use `fork_thread` when available. Create one fork
-and send it a continuation containing the user's request, decisions, current
-directory, completed setup, and next step; an unfinished turn may not be copied.
-Tell the fork that installation is complete and that it must verify the skill
-and MCP calls below before continuing, without reinstalling or forking again.
-Stop application work in the original task to avoid two writers. Once the fork
-exists, show the user where to continue and offer to close/archive the original
-task; do not close it automatically or claim the plugin works before verification.
+Only after every check passes, activate the plugin through the current agent's
+supported mechanism. For Codex, follow the [Codex activation instructions](plugins/fluxzero/instructions.md).
+Specific supplements for other agents will be added after their workflows have
+been qualified; do not apply Codex's fork instructions to other agents.
 
-Do not fork merely because a previously installed plugin is unavailable in this
-session. If the agent has no callable native fork operation, use its supported
-activation route and carry the brief forward: `/reload-plugins` or a new Claude
-Code session, a Cursor reload, a Gemini CLI restart, or a new Copilot CLI session.
-For Codex without a callable fork tool, explain the native action needed to
-continue in a fresh task. If a macOS agent still has the old inherited `PATH`,
-completely quit and relaunch it first; a conversation fork does not refresh the
-environment of an already-running application. Ask for a manual action only
-when the agent cannot perform that required activation itself.
+Preserve the current directory, checkout, and user's request. A stale inherited
+`PATH` requires a full process relaunch. Ask for a manual activation action only
+when the agent cannot perform it itself.
 
 In the first activated task, confirm that the `build-fluxzero-app` skill is
 available, call `docs_start` through `fluxzero-dev`, and complete a
@@ -349,13 +334,17 @@ unmanaged docs.
 
 ## Repository layout
 
-`skills/build-fluxzero-app/SKILL.md` is the canonical skill and the Gemini CLI
-copy. `npm run generate` renders byte-identical skill copies into four thin,
-self-contained plugin packages, plus their manifests, transport-specific
-documentation and development MCP configurations, and marketplace catalogs.
-The internal `adapters/` directories keep agent-specific formats isolated so
-one client cannot auto-discover another client's incompatible MCP settings. CI
-rejects generated drift and symlinks.
+`skills/build-fluxzero-app/common.md` contains the shared skill, including its
+frontmatter. An agent's directory can contain an optional `instructions.md` source.
+Currently only Codex has a supplement; other agents receive the shared skill.
+`npm run generate` joins the shared skill and that agent's supplement into a
+self-contained `SKILL.md`; Gemini's generated skill lives at the repository
+root under `skills/`. Edit the sources, not the generated skills.
+
+`scripts/agent-skills.mjs` lists the five source/output pairs. The generator also
+renders agent-specific manifests, MCP configurations, and marketplace catalogs.
+CI checks source composition, generated drift, and isolation of activation
+instructions between agents.
 
 ## Development
 
