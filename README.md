@@ -1,4 +1,10 @@
+<a href="https://fluxzero.io"><img src="https://raw.githubusercontent.com/fluxzero-io/.github/main/assets/brand/2026-09/repository-header.svg" alt="Fluxzero — The European cloud for AI-built apps" width="1280"></a>
+
 # Fluxzero Agent Plugins
+
+Give your coding agent the workflow and product context to build on [Fluxzero](https://fluxzero.io), the European cloud for AI-built apps. Spend prompts on features and user experience while Fluxzero runs the cloud your product needs.
+
+[Get started](https://fluxzero.io/get-started) · [How it works](https://fluxzero.io/how-it-works) · [Docs](https://fluxzero.io/docs)
 
 This repository distributes Fluxzero plugins for Codex, Claude Code, Cursor,
 and GitHub Copilot, plus the equivalent Gemini CLI extension. Every package
