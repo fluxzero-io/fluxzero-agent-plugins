@@ -2,7 +2,7 @@
 
 # Fluxzero Agent Plugins
 
-Give your coding agent the workflow and product context to build on [Fluxzero](https://fluxzero.io), the European cloud for AI-built apps. Spend prompts on features and user experience while Fluxzero runs the cloud your product needs.
+Plugins for using [Fluxzero](https://fluxzero.io) with your coding agent.
 
 [Get started](https://fluxzero.io/get-started) · [How it works](https://fluxzero.io/how-it-works) · [Docs](https://fluxzero.io/docs)
 
