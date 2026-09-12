@@ -4,7 +4,7 @@
 
 Plugins for using [Fluxzero](https://fluxzero.io) with your coding agent.
 
-[Get started](https://fluxzero.io/get-started) · [How it works](https://fluxzero.io/how-it-works) · [Docs](https://fluxzero.io/docs)
+[How it works](https://fluxzero.io/how-it-works) · [Docs](https://fluxzero.io/docs)
 
 This repository distributes Fluxzero plugins for Codex, Claude Code, Cursor,
 and GitHub Copilot, plus the equivalent Gemini CLI extension. Every package
