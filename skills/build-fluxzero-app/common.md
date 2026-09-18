@@ -200,6 +200,17 @@ poll `get_status` until a session is available. On `dev-server-start-failed`, in
 diagnostics, correct the cause and retry `start_dev`. Fetch a fresh status and cursor before
 waiting for project events. Status and documentation calls never start development themselves.
 
+`start_dev` already selects background ownership; it needs no interactive detach
+action. If the task requires a CLI or local-build launch instead, select background
+mode using that launcher's current help. Bare `fz dev` attaches a terminal whose
+closure stops the environment. For a temporary agent shell, also use the execution
+tool's supported detached process/session facility: shell `&` or `nohup` alone may
+remain in the process group that the tool cleans up on exit. After the launching
+command has finished, check fresh project status and the application URL before
+handing it to the user. Preserve the startup logs and session identity if the
+process disappears; do not mistake it for a missing background flag or silently
+start a second environment.
+
 The active dev environment exclusively owns source watching, compilation,
 application and local support-service replacement, configured startup commands,
 and background test execution. Do not start a second build, test process,

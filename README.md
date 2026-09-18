@@ -197,6 +197,14 @@ Then obtain a fresh status cursor and follow `wait_for_change` through startup a
 verification. If a greenfield environment was already running, preserve its
 pre-initialization cursor and the same session through generation.
 
+`start_dev` already starts in background mode. An interactive `fz dev` session
+owns its environment until explicitly detached; closing its terminal stops it.
+For an explicit CLI/local-build launch from a temporary agent shell, choose the
+launcher's background mode and the execution tool's supported detached process
+session. `nohup` alone does not isolate a Unix process group from tool cleanup.
+Verify fresh project status and the URL after the launching command exits before
+reporting that an environment will remain available.
+
 When `fluxzero-dev` is active, agents must not run duplicate wrapper tests,
 applications, watchers, or continuous log commands. Project wrappers remain
 available for CI and releases; CI owns full regression coverage. The Dev Server
