@@ -15,3 +15,11 @@ The installed CLI is authoritative for its evolving capabilities and for the dev
 If the skill or `fluxzero-dev` server is unavailable, follow the complete onboarding at `https://plugins.fluxzero.io` (source repository `fluxzero-io/fluxzero-agent-plugins`) using this coding agent's native plugin mechanism. Complete prerequisites, then follow the current agent's activation instructions in that onboarding guide. Preserve the directory, checkout, and user's request; a stale inherited `PATH` requires a full process relaunch. After activation, require the skill, complete `docs_start`, and complete a `get_status` call through `fluxzero-dev`; configuration or tool registration alone is not readiness. The status call must work in an empty workspace and identify its intended root. Initialize such a root with `fz init --in-place`. If no dev server is active, call `start_dev` on the same MCP connection, poll `get_status` while startup is in progress and obtain a fresh cursor. If a greenfield environment was already active, retain its pre-init cursor and the same dev session. If the installed package remains unavailable and the agent cannot perform the required activation, tell the user which one agent-native action is required and stop before changing Fluxzero code. Do not substitute direct wrapper builds or a separately started dev server for a missing plugin MCP surface.
 
 Use the versioned graph through the local plugin/MCP as the managed documentation source. Do not add hand-maintained Fluxzero manuals or duplicate the Fluxzero MCP configuration in this project.
+
+## Functional progress
+
+Follow the plugin's Functional Progress workflow to keep `.fluxzero/progress.yaml`
+current through `get_progress` and the `upsert_progress_*` MCP tools. Record only
+agreed functional features and user-reported bugs, grouped into milestones, with
+Planned, In progress or Done. Preserve history and verify acceptance before Done.
+This overview supports the conversation; implementation chores do not belong in it.
