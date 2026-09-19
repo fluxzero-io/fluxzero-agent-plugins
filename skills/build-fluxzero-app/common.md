@@ -189,6 +189,23 @@ installed command output ever differ, the command output wins.
 10. If neither a Fluxzero project nor Fluxzero docs are available, stop and
    explain the setup problem. Do not continue by inventing a non-Fluxzero app.
 
+## Showing and Testing the App
+
+Introduce Devboard once the first usable app is running and you have checked it.
+Use the `devboard` skill to resolve the current project URL and link directly to
+App preview, with one concrete thing the user can try. For backend-only projects,
+introduce the relevant page after the first verified functional scenario. Mention
+Progress briefly as the record of completed and upcoming work. Link again when a
+meaningful result makes a page useful, or when the user asks; avoid repeating a
+generic dashboard link after every edit.
+
+Prefer App preview for normal browser-based UI checks so the user and agent see
+the same context. For mobile checks, resize the browser viewport: the Devboard
+sidebar already hides at narrow widths, so expanded mode is not required.
+Use a standalone app tab when iframe behavior would distort what you need to
+verify, such as authentication, top-level navigation or downloads. This is a
+default workflow, not a restriction on choosing the right testing surface.
+
 ## Investigating Application Behavior
 
 When Devboard monitoring tools are available, use them to investigate the selected
