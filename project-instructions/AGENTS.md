@@ -23,3 +23,12 @@ current through `get_progress` and the `upsert_progress_*` MCP tools. Record onl
 agreed functional features and user-reported bugs, grouped into milestones, with
 Planned, In progress or Done. Preserve history and verify acceptance before Done.
 This overview supports the conversation; implementation chores do not belong in it.
+
+## Application monitoring
+
+Follow the plugin's Investigating Application Behavior workflow when Devboard
+monitoring MCP tools are available. Inspect issues, traces, audit messages,
+application logs and relevant stored documents directly for the selected project.
+Use bounded summaries before requesting payloads; report unavailable or truncated
+data honestly. Monitoring does not replace managed build/test feedback and is not
+a reason to reset the workspace or ask the user to gather logs manually.

@@ -184,7 +184,12 @@ Every package provides the same workflow:
 `fluxzero-dev` runs `fz mcp` in the selected workspace. Its `docs_*` tools use
 versioned archives in the shared local cache; warm cached documentation works offline.
 The same MCP interface forwards project status, problems, logs and test feedback once
-a dev environment is running. Documentation alone opens no project server or watcher.
+a dev environment is running. With a dev-server distribution that includes Devboard
+monitoring tools, agents can also investigate audit messages, application logs,
+traces, issues, Insights, Workspace resources and stored documents directly. The
+shared skill describes summary-first investigation, explicit detail reads and
+bounded pagination. Older pinned distributions may not expose these tools.
+Documentation alone opens no project server or watcher.
 
 For a new or empty workspace, complete a `get_status` call and confirm its
 `projectDirectory`. `dev-server-not-running` is a valid bootstrap status.
