@@ -10,6 +10,15 @@ contains the shared application-building workflow with an optional agent-specifi
 Install the package for your coding agent once; projects do not need
 hand-maintained Fluxzero manuals or duplicate MCP registrations.
 
+## Open Devboard
+
+The `devboard` skill opens the current project's Devboard using its live MCP
+status, reusing the running environment and its browser tab where possible.
+It defaults to App preview; you can also request Workspace, Progress, Tests or
+Startup. Invoke it through your client's skill picker, `$devboard` in Codex,
+or `/fluxzero:devboard` for the Claude Code plugin. Client command prefixes vary.
+If no browser-opening tool is available, it returns the current link.
+
 ## One-time environment onboarding
 
 Treat first-time Fluxzero onboarding as one complete setup in the current

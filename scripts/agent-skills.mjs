@@ -11,3 +11,11 @@ export const agentSkills = [
 export function composeSkill(common, supplement) {
   return [common.trimEnd(), supplement.trim()].filter(Boolean).join("\n\n") + "\n";
 }
+
+// Shared entry skill copied into each packaged agent without workflow supplements.
+export const sharedSkillCopies = [
+  "plugins/fluxzero",
+  "adapters/claude/fluxzero",
+  "adapters/cursor/fluxzero",
+  "adapters/copilot/fluxzero",
+].map(root => ["skills/devboard/SKILL.md", `${root}/skills/devboard/SKILL.md`]);
