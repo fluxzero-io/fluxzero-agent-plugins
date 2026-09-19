@@ -215,6 +215,17 @@ Offer the relevant Devboard page when it helps the user see a finding; keep the
 investigation in MCP. These observations complement the managed development
 feedback loop and do not justify rerunning full test suites.
 
+For issue actions, read `get_issue` in the selected project first. After an
+authorized bugfix is implemented and its reported behavior verified, use
+`resolve_issue` for the corresponding issue without an extra approval step.
+State the reason and verification in the conversation. A code edit or absence of
+recent logs alone is not verification. Use `reopen_issue` if a resolved problem
+persists or recurs. Use `mute_issue` / `unmute_issue` only when the user explicitly
+wants that issue ignored / monitored again; never mute to hide an unfixed failure.
+These are individual status changes, not deletion or bulk cleanup. After an
+unconfirmed write, read the issue again before retrying: the action may already
+have succeeded. Confirm the returned status before reporting completion.
+
 ## Functional Progress
 
 Keep a small, version-controlled product history in `.fluxzero/progress.yaml`.

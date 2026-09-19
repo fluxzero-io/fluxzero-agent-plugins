@@ -32,3 +32,8 @@ application logs and relevant stored documents directly for the selected project
 Use bounded summaries before requesting payloads; report unavailable or truncated
 data honestly. Monitoring does not replace managed build/test feedback and is not
 a reason to reset the workspace or ask the user to gather logs manually.
+
+Resolve the corresponding issue after an authorized fix is verified, and explain
+why in the conversation. Reopen if the problem persists. Mute/unmute only at the
+user's explicit request. Read the issue first and recheck after an unconfirmed
+write instead of blindly repeating an action.

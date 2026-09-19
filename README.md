@@ -187,8 +187,9 @@ The same MCP interface forwards project status, problems, logs and test feedback
 a dev environment is running. With a dev-server distribution that includes Devboard
 monitoring tools, agents can also investigate audit messages, application logs,
 traces, issues, Insights, Workspace resources and stored documents directly. The
-shared skill describes summary-first investigation, explicit detail reads and
-bounded pagination. Older pinned distributions may not expose these tools.
+shared skill describes summary-first investigation, explicit detail reads,
+bounded pagination and individual issue actions. Agents can resolve verified
+fixes and reopen recurring problems; mute/unmute require explicit user intent. Older pinned distributions may not expose these tools.
 Documentation alone opens no project server or watcher.
 
 For a new or empty workspace, complete a `get_status` call and confirm its
