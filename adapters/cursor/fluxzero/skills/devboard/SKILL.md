@@ -5,30 +5,15 @@ description: Open the Fluxzero Devboard for the current project, or return its c
 
 # Open Devboard
 
-1. Use the plugin's `fluxzero-dev` MCP connection. Call `get_status` and
-   check the returned project directory against the user's intended project.
-   If it differs, use `select_project` when available with the confirmed app
-   directory, then read status again. Resolve ambiguity before opening or
-   starting a different project. Never choose a project from a remembered port.
-2. Reuse the running environment. If this project has no running dev server,
-   use `start_dev` on that connection to start it, then follow `get_status`
-   until the gateway is available or startup fails. Do not restart an active
-   environment just to open Devboard. If the CLI or MCP is unavailable, use the
-   plugin's build-fluxzero-app onboarding guidance; do not invent a launch command.
-3. Get the live URL from the returned environment. Prefer an explicitly returned
-   `consoleUrl`. Otherwise, a session gateway advertising
-   `metadata.devConsoleVersion: "1"` serves Devboard at
-   `<session.gateway.url>/_fluxzero/dev/`. If neither is available, explain that
-   this server does not expose a supported Devboard instead of guessing.
-4. Open the requested page: `#application` for App preview (the default),
-   `#projects` for Workspace, `#progress`, `#tests`, or `#startup`.
-   Reuse a matching browser tab when possible. Respect the user's chosen browser;
-   otherwise use the host's available browser-opening tool. Verify the resulting
-   page when browser inspection is available and leave it open for the user.
-5. Return a concise clickable link. If opening is unavailable, provide the link
-   without claiming to have opened it. A localhost URL is only reachable on the
-   machine running the dev server; for a remote session explain that limitation
-   rather than exposing a port or changing network access.
+Use the project's `fluxzero-dev` MCP connection. Read `get_workflow` with topic
+`preview` for current URL discovery, supported pages and opening behavior.
+Check the selected project and reuse its running environment. If development
+must start, use the supported MCP start action and reread the workflow afterward.
+Respect the user's chosen browser and leave the requested page open; provide a
+clickable live link if opening is unavailable. Do not rerun tests or change
+Progress just to show Devboard.
 
-Opening Devboard does not require rerunning tests, changing project data, or
-updating Progress. Keep this action focused on showing the requested page.
+For older servers without workflow discovery, inspect `get_status` for an
+explicit console URL. Open it when present; otherwise explain the missing
+capability instead of guessing a localhost port or path. Preserve version pins.
+Use the build skill's installation guidance when CLI/MCP readiness is missing.

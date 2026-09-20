@@ -14,14 +14,14 @@ test("generated adapters are current", async () => {
   assert.match(stdout, /current/);
 });
 
-test("only Codex receives the fork workflow; all agents retain shared readiness", async () => {
+test("only Codex receives its activation supplement; all agents retain shared readiness", async () => {
   const common = await readFile(path.join(root, "skills/build-fluxzero-app/common.md"), "utf8");
   assert.doesNotMatch(common, /fork_thread|fork the conversation/);
   const codex = await readFile(path.join(root, "plugins/fluxzero/skills/build-fluxzero-app/SKILL.md"), "utf8");
   const supplement = await readFile(path.join(root, "plugins/fluxzero/instructions.md"), "utf8");
   assert.ok(codex.startsWith(common.trimEnd()));
   assert.ok(codex.endsWith(supplement));
-  assert.match(codex, /fork_thread/);
+  assert.doesNotMatch(codex, /fork_thread/);
   for (const file of [
     "adapters/claude/fluxzero/skills/build-fluxzero-app/SKILL.md",
     "adapters/cursor/fluxzero/skills/build-fluxzero-app/SKILL.md",
@@ -107,7 +107,7 @@ test("bare macOS onboarding has one explicit Command Line Tools boundary", async
   assert.doesNotMatch(readme, /archive\/refs\/heads\/main|main\.zip/);
 });
 
-test("Codex onboarding verifies installation before its first-install fork or environment relaunch", async () => {
+test("Codex onboarding verifies installation before activation or environment relaunch", async () => {
   const readme = await readFile(path.join(root, "README.md"), "utf8");
   const marketplace = readme.indexOf("codex plugin marketplace add fluxzero-io/fluxzero-agent-plugins");
   const install = readme.indexOf("codex plugin add fluxzero@fluxzero", marketplace);
@@ -164,18 +164,6 @@ test("activation proves the development MCP with a completed empty-workspace sta
   }
 });
 
-test("greenfield workflow keeps one watched root and cursor through in-place generation", async () => {
-  const files = ["README.md", "skills/build-fluxzero-app/common.md"];
-  for (const file of files) {
-    const content = await readFile(path.join(root, file), "utf8");
-    assert.ok(content.includes("fz init --in-place"), `${file} must use in-place initialization`);
-    assert.match(content, /pre-(?:initialization|init).*cursor/is);
-    assert.match(content, /wait_for_change/);
-    assert.match(content, /(?:same|reuses? the).*?(?:session|bridge|environment)/is);
-    assert.match(content, /(?:do not|never).*(?:named child|move)/is);
-  }
-});
-
 test("the public onboarding prompt stays agent-neutral and two lines", async () => {
   const readme = await readFile(path.join(root, "README.md"), "utf8");
   const prompt = readme.match(/This minimal prompt is intentionally agent-neutral:\n\n```text\n([\s\S]*?)\n```/);
@@ -207,15 +195,6 @@ test("canonical instructions delegate evolving CLI and dev configuration to inst
   }
 });
 
-test("canonical agent workflow follows startup through the early dev control plane", async () => {
-  const content = await readFile(path.join(root, "skills/build-fluxzero-app/common.md"), "utf8");
-  assert.ok(content.includes("control plane can connect while"));
-  assert.match(content, /call\s+`get_status`\s+immediately/);
-  assert.match(content, /call\s+`get_active_problems`\s+immediately/);
-  assert.match(content, /follow\s+`wait_for_change`/i);
-  assert.match(content, /Do not wait for an MCP startup timeout/);
-});
-
 test("canonical instructions define the complete version-aware authority map", async () => {
   const files = [
     "README.md",
@@ -235,24 +214,6 @@ test("canonical instructions define the complete version-aware authority map", a
       assert.ok(content.includes(source), `${file} must identify ${source} as an authoritative source`);
     }
     assert.match(content, /never `main`/);
-  }
-});
-
-test("agents leave test selection and execution to the active Dev Server", async () => {
-  const files = [
-    "README.md",
-    "skills/build-fluxzero-app/common.md",
-    "project-instructions/AGENTS.md",
-  ];
-  for (const file of files) {
-    const content = await readFile(path.join(root, file), "utf8");
-    assert.match(content, /Dev Server[\s\S]{0,120}(?:chooses|selects|selection)/i);
-    assert.match(content, /(?:do\s+not|must\s+not|does\s+not)[\s\S]{0,120}(?:manually\s+)?rerun/i);
-    assert.match(content, /(?:do\s+not|must\s+not|does\s+not)[\s\S]{0,180}(?:full|whole)\s+suite/i);
-    assert.match(content, /(?:selects?\s+no\s+tests|no\s+test\s+is\s+selected)/i);
-    assert.match(content, /compile\/reload/i);
-    assert.match(content, /CI\s+owns[\s\S]{0,80}(?:full\s+)?regression/i);
-    assert.doesNotMatch(content, /final\s+CI-equivalent/i);
   }
 });
 

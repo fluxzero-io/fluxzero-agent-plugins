@@ -163,7 +163,8 @@ Version-sensitive knowledge stays with the component that owns it:
 
 | Information | Authoritative source |
 |:------------|:---------------------|
-| CLI installation and agent workflow | This plugin |
+| CLI installation and stable working agreements | This plugin |
+| Current dev-server workflows | `get_workflow` on `fluxzero-dev` |
 | SDK version used by a project | Its effective Maven or Gradle model |
 | SDK concepts and APIs for the selected version | The `docs_*` tools on `fluxzero-dev` |
 | Current CLI commands | `fz --help` |
@@ -196,9 +197,12 @@ The same MCP interface forwards project status, problems, logs and test feedback
 a dev environment is running. With a dev-server distribution that includes Devboard
 monitoring tools, agents can also investigate audit messages, application logs,
 traces, issues, Insights, Workspace resources and stored documents directly. The
-shared skill describes summary-first investigation, explicit detail reads,
-bounded pagination and individual issue actions. Agents can resolve verified
-fixes and reopen recurring problems; mute/unmute require explicit user intent. Older pinned distributions may not expose these tools.
+server's `get_workflow` tool describes current development, preview, monitoring,
+Progress and startup workflows. The plugin retains stable intent and routing;
+workflow details travel with the owning server rather than requiring a plugin
+upgrade. The stdio connection forwards workflow requests to the selected running
+server, or serves its own version before startup. Older servers without discovery
+use their advertised tools and CLI help; pins are never changed for this fallback.
 Documentation alone opens no project server or watcher.
 
 For a new or empty workspace, complete a `get_status` call and confirm its
@@ -234,9 +238,8 @@ from different snapshots.
 ## Install
 
 Before installing, check the agent's native plugin or extension listing and
-remember whether Fluxzero was already installed. Reuse an existing installation;
-the first-install fork below applies only when this onboarding actually installs
-a previously absent plugin, not to an update, reconnect, or missing MCP tool.
+reuse an existing installation. Installation or an update does not by itself
+require a new conversation; verify activation in the current conversation.
 
 ### Codex
 
@@ -249,7 +252,7 @@ codex plugin list --json
 Require the final output to list `fluxzero@fluxzero` as installed and enabled.
 If `codex` is not on `PATH`, the Codex desktop application bundles the same
 command at `/Applications/ChatGPT.app/Contents/Resources/codex`; use that
-absolute executable for all three commands. Do not start a new task yet.
+absolute executable for all three commands. Keep the current task.
 
 ### Claude Code
 
@@ -258,8 +261,9 @@ claude plugin marketplace add fluxzero-io/fluxzero-agent-plugins
 claude plugin install fluxzero@fluxzero
 ```
 
-Defer `/reload-plugins` or a new Claude Code session until the final activation
-step below.
+Recent Claude Code versions apply installations from the `/plugin` menu when
+you close it. For an external CLI installation or pending changes, use
+`/reload-plugins` in the current session during the final activation step below.
 
 ### Cursor
 
@@ -313,14 +317,15 @@ while any item is missing.
 
 Only after every check passes, activate the plugin through the current agent's
 supported mechanism. For Codex, follow the [Codex activation instructions](plugins/fluxzero/instructions.md).
-Specific supplements for other agents will be added after their workflows have
-been qualified; do not apply Codex's fork instructions to other agents.
+For Claude Code, use `/reload-plugins` if changes are still pending; a new
+session is not the default. Use the documented native activation mechanism for
+other clients.
 
 Preserve the current directory, checkout, and user's request. A stale inherited
 `PATH` requires a full process relaunch. Ask for a manual activation action only
 when the agent cannot perform it itself.
 
-In the first activated task, confirm that the `build-fluxzero-app` skill is
+After activation in the current conversation, confirm that the `build-fluxzero-app` skill is
 available, call `docs_start` through `fluxzero-dev`, and complete a
 `get_status` call through `fluxzero-dev` before application work. Merely seeing
 the development server in configuration or a tool catalogue is not readiness.
