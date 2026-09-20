@@ -5,7 +5,7 @@ import path from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
 
-import { agentSkills, composeSkill } from "./agent-skills.mjs";
+import { agentSkills, composeSkill, sharedSkillCopies } from "./agent-skills.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const config = JSON.parse(await readFile(path.join(root, "plugins.config.json"), "utf8"));
@@ -38,6 +38,9 @@ const devMcp = {
 };
 
 const outputs = new Map([
+  ...await Promise.all(sharedSkillCopies.map(async ([source, target]) => [
+    target, await readFile(path.join(root, source), "utf8"),
+  ])),
   ...await Promise.all(agentSkills.map(async ([source, target]) => [
     target, composeSkill(skill, source ? await readFile(path.join(root, source), "utf8") : ""),
   ])),

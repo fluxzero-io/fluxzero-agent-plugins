@@ -10,6 +10,15 @@ contains the shared application-building workflow with an optional agent-specifi
 Install the package for your coding agent once; projects do not need
 hand-maintained Fluxzero manuals or duplicate MCP registrations.
 
+## Open Devboard
+
+The `devboard` skill opens the current project's Devboard using its live MCP
+status, reusing the running environment and its browser tab where possible.
+It defaults to App preview; you can also request Workspace, Progress, Tests or
+Startup. Invoke it through your client's skill picker, `$devboard` in Codex,
+or `/fluxzero:devboard` for the Claude Code plugin. Client command prefixes vary.
+If no browser-opening tool is available, it returns the current link.
+
 ## One-time environment onboarding
 
 Treat first-time Fluxzero onboarding as one complete setup in the current
@@ -184,7 +193,13 @@ Every package provides the same workflow:
 `fluxzero-dev` runs `fz mcp` in the selected workspace. Its `docs_*` tools use
 versioned archives in the shared local cache; warm cached documentation works offline.
 The same MCP interface forwards project status, problems, logs and test feedback once
-a dev environment is running. Documentation alone opens no project server or watcher.
+a dev environment is running. With a dev-server distribution that includes Devboard
+monitoring tools, agents can also investigate audit messages, application logs,
+traces, issues, Insights, Workspace resources and stored documents directly. The
+shared skill describes summary-first investigation, explicit detail reads,
+bounded pagination and individual issue actions. Agents can resolve verified
+fixes and reopen recurring problems; mute/unmute require explicit user intent. Older pinned distributions may not expose these tools.
+Documentation alone opens no project server or watcher.
 
 For a new or empty workspace, complete a `get_status` call and confirm its
 `projectDirectory`. `dev-server-not-running` is a valid bootstrap status.
@@ -196,6 +211,14 @@ fails, inspect diagnostics, correct the cause and retry `start_dev`.
 Then obtain a fresh status cursor and follow `wait_for_change` through startup and
 verification. If a greenfield environment was already running, preserve its
 pre-initialization cursor and the same session through generation.
+
+`start_dev` already starts in background mode. An interactive `fz dev` session
+owns its environment until explicitly detached; closing its terminal stops it.
+For an explicit CLI/local-build launch from a temporary agent shell, choose the
+launcher's background mode and the execution tool's supported detached process
+session. `nohup` alone does not isolate a Unix process group from tool cleanup.
+Verify fresh project status and the URL after the launching command exits before
+reporting that an environment will remain available.
 
 When `fluxzero-dev` is active, agents must not run duplicate wrapper tests,
 applications, watchers, or continuous log commands. Project wrappers remain

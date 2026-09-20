@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { agentSkills, composeSkill } from "./agent-skills.mjs";
+import { agentSkills, composeSkill, sharedSkillCopies } from "./agent-skills.mjs";
 
 import { lstat, readdir, readFile } from "node:fs/promises";
 import path from "node:path";
@@ -46,6 +46,11 @@ for (const [source, target] of agentSkills) {
   const supplement = source ? await readFile(path.join(root, source), "utf8") : "";
   const actual = await readFile(path.join(root, target), "utf8");
   if (actual !== composeSkill(canonicalSkill, supplement)) fail(`${target} differs from its sources`);
+}
+
+for (const [source, target] of sharedSkillCopies) {
+  const expected = await readFile(path.join(root, source), "utf8");
+  assertEqual(await readFile(path.join(root, target), "utf8"), expected, target);
 }
 
 const frontmatter = canonicalSkill.match(/^---\n([\s\S]*?)\n---\n/);
