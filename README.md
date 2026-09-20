@@ -234,9 +234,8 @@ from different snapshots.
 ## Install
 
 Before installing, check the agent's native plugin or extension listing and
-remember whether Fluxzero was already installed. Reuse an existing installation;
-the first-install fork below applies only when this onboarding actually installs
-a previously absent plugin, not to an update, reconnect, or missing MCP tool.
+reuse an existing installation. Installation or an update does not by itself
+require a new conversation; verify activation in the current conversation.
 
 ### Codex
 
@@ -249,7 +248,7 @@ codex plugin list --json
 Require the final output to list `fluxzero@fluxzero` as installed and enabled.
 If `codex` is not on `PATH`, the Codex desktop application bundles the same
 command at `/Applications/ChatGPT.app/Contents/Resources/codex`; use that
-absolute executable for all three commands. Do not start a new task yet.
+absolute executable for all three commands. Keep the current task.
 
 ### Claude Code
 
@@ -258,8 +257,9 @@ claude plugin marketplace add fluxzero-io/fluxzero-agent-plugins
 claude plugin install fluxzero@fluxzero
 ```
 
-Defer `/reload-plugins` or a new Claude Code session until the final activation
-step below.
+Recent Claude Code versions apply installations from the `/plugin` menu when
+you close it. For an external CLI installation or pending changes, use
+`/reload-plugins` in the current session during the final activation step below.
 
 ### Cursor
 
@@ -313,14 +313,15 @@ while any item is missing.
 
 Only after every check passes, activate the plugin through the current agent's
 supported mechanism. For Codex, follow the [Codex activation instructions](plugins/fluxzero/instructions.md).
-Specific supplements for other agents will be added after their workflows have
-been qualified; do not apply Codex's fork instructions to other agents.
+For Claude Code, use `/reload-plugins` if changes are still pending; a new
+session is not the default. Use the documented native activation mechanism for
+other clients.
 
 Preserve the current directory, checkout, and user's request. A stale inherited
 `PATH` requires a full process relaunch. Ask for a manual activation action only
 when the agent cannot perform it itself.
 
-In the first activated task, confirm that the `build-fluxzero-app` skill is
+After activation in the current conversation, confirm that the `build-fluxzero-app` skill is
 available, call `docs_start` through `fluxzero-dev`, and complete a
 `get_status` call through `fluxzero-dev` before application work. Merely seeing
 the development server in configuration or a tool catalogue is not readiness.

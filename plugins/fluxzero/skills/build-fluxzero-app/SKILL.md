@@ -109,8 +109,8 @@ tool is not readiness. The status call must also succeed in an empty workspace
 before a project exists and report that workspace as
 `projectDirectory` when no dev server is running, or `session.projectDirectory` when active.
 `dev-server-not-running` is valid for documentation bootstrap. If an installed plugin or a changed `PATH` is not
-active in this process, apply the first-install handoff above when applicable;
-otherwise use the supported reload or restart. Tell the user the one manual
+active in this process, use the supported activation mechanism in the current
+conversation. Restart only when needed to repair the process environment. Tell the user the one manual
 action needed only if you cannot perform that activation yourself, then stop.
 After activation, repeat the completed calls instead of assuming they
 worked. Do not claim readiness or build with duplicate wrapper processes while
@@ -431,12 +431,15 @@ present a generic app as complete.
 
 ## Codex activation
 
-Check whether Fluxzero was installed before onboarding. Only after installing a
-previously absent plugin and completing prerequisites, fork the conversation
-with `fork_thread` when available, retaining the directory and checkout. Send
-the fork the user's request, decisions, completed setup, and next step; an
-unfinished turn may not be copied. The fork must verify the skill and MCP calls
-before continuing, without reinstalling or forking again. Stop application work
-in the original task, show the fork, and offer to archive the original without
-automatically closing it. Do not fork for an existing installation or update.
-If no fork tool is available, explain how to continue in a fresh Codex task.
+After installation or upgrade, keep the current conversation, directory and
+checkout. Recent Codex versions pick up installed plugin tools in existing
+sessions and refresh skills after plugin changes. Do not create a fork or a
+new task solely to activate Fluxzero. If the current turn still has the old
+skill catalogue, continue verification on the next user message in this task.
+
+Confirm that the skill is available and complete `docs_start` and `get_status`
+through `fluxzero-dev` before application work. If activation is still missing,
+inspect the client version and MCP startup diagnostics and use its supported
+reload mechanism. Relaunch the process only when needed, for example when its
+inherited `PATH` cannot resolve `fz`; preserve the conversation and setup.
+Do not reinstall a working plugin or bypass missing MCP tools.

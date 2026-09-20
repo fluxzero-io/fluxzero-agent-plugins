@@ -109,8 +109,8 @@ tool is not readiness. The status call must also succeed in an empty workspace
 before a project exists and report that workspace as
 `projectDirectory` when no dev server is running, or `session.projectDirectory` when active.
 `dev-server-not-running` is valid for documentation bootstrap. If an installed plugin or a changed `PATH` is not
-active in this process, apply the first-install handoff above when applicable;
-otherwise use the supported reload or restart. Tell the user the one manual
+active in this process, use the supported activation mechanism in the current
+conversation. Restart only when needed to repair the process environment. Tell the user the one manual
 action needed only if you cannot perform that activation yourself, then stop.
 After activation, repeat the completed calls instead of assuming they
 worked. Do not claim readiness or build with duplicate wrapper processes while

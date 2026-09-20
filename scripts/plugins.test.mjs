@@ -14,14 +14,14 @@ test("generated adapters are current", async () => {
   assert.match(stdout, /current/);
 });
 
-test("only Codex receives the fork workflow; all agents retain shared readiness", async () => {
+test("only Codex receives its activation supplement; all agents retain shared readiness", async () => {
   const common = await readFile(path.join(root, "skills/build-fluxzero-app/common.md"), "utf8");
   assert.doesNotMatch(common, /fork_thread|fork the conversation/);
   const codex = await readFile(path.join(root, "plugins/fluxzero/skills/build-fluxzero-app/SKILL.md"), "utf8");
   const supplement = await readFile(path.join(root, "plugins/fluxzero/instructions.md"), "utf8");
   assert.ok(codex.startsWith(common.trimEnd()));
   assert.ok(codex.endsWith(supplement));
-  assert.match(codex, /fork_thread/);
+  assert.doesNotMatch(codex, /fork_thread/);
   for (const file of [
     "adapters/claude/fluxzero/skills/build-fluxzero-app/SKILL.md",
     "adapters/cursor/fluxzero/skills/build-fluxzero-app/SKILL.md",
@@ -107,7 +107,7 @@ test("bare macOS onboarding has one explicit Command Line Tools boundary", async
   assert.doesNotMatch(readme, /archive\/refs\/heads\/main|main\.zip/);
 });
 
-test("Codex onboarding verifies installation before its first-install fork or environment relaunch", async () => {
+test("Codex onboarding verifies installation before activation or environment relaunch", async () => {
   const readme = await readFile(path.join(root, "README.md"), "utf8");
   const marketplace = readme.indexOf("codex plugin marketplace add fluxzero-io/fluxzero-agent-plugins");
   const install = readme.indexOf("codex plugin add fluxzero@fluxzero", marketplace);
