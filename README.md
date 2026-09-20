@@ -163,7 +163,8 @@ Version-sensitive knowledge stays with the component that owns it:
 
 | Information | Authoritative source |
 |:------------|:---------------------|
-| CLI installation and agent workflow | This plugin |
+| CLI installation and stable working agreements | This plugin |
+| Current dev-server workflows | `get_workflow` on `fluxzero-dev` |
 | SDK version used by a project | Its effective Maven or Gradle model |
 | SDK concepts and APIs for the selected version | The `docs_*` tools on `fluxzero-dev` |
 | Current CLI commands | `fz --help` |
@@ -196,9 +197,12 @@ The same MCP interface forwards project status, problems, logs and test feedback
 a dev environment is running. With a dev-server distribution that includes Devboard
 monitoring tools, agents can also investigate audit messages, application logs,
 traces, issues, Insights, Workspace resources and stored documents directly. The
-shared skill describes summary-first investigation, explicit detail reads,
-bounded pagination and individual issue actions. Agents can resolve verified
-fixes and reopen recurring problems; mute/unmute require explicit user intent. Older pinned distributions may not expose these tools.
+server's `get_workflow` tool describes current development, preview, monitoring,
+Progress and startup workflows. The plugin retains stable intent and routing;
+workflow details travel with the owning server rather than requiring a plugin
+upgrade. The stdio connection forwards workflow requests to the selected running
+server, or serves its own version before startup. Older servers without discovery
+use their advertised tools and CLI help; pins are never changed for this fallback.
 Documentation alone opens no project server or watcher.
 
 For a new or empty workspace, complete a `get_status` call and confirm its
