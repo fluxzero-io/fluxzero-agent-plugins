@@ -1,6 +1,6 @@
 {
   "name": "fluxzero",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "Build and extend Fluxzero applications with verified first-time prerequisites, current SDK guidance, and an automated local development loop.",
   "author": {
     "name": "Fluxzero",
@@ -19,6 +19,10 @@
   "mcpServers": "./.mcp.json",
   "interface": {
     "displayName": "Fluxzero",
+    "logo": "./assets/brand/fluxzero.png",
+    "composerIcon": "./assets/brand/fluxzero.png",
+    "brandColor": "#3582BC",
+    "brandColorDark": "#78B4D6",
     "shortDescription": "Build and extend Fluxzero applications.",
     "longDescription": "Fluxzero gives Codex a safe workflow for new and existing Java or Kotlin projects, current selectively retrieved documentation, and structured local development feedback.",
     "developerName": "Fluxzero",
