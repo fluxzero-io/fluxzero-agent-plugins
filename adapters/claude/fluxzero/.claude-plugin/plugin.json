@@ -1,6 +1,6 @@
 {
   "name": "fluxzero",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "Build and extend Fluxzero applications with verified first-time prerequisites, current SDK guidance, and an automated local development loop.",
   "author": {
     "name": "Fluxzero",
@@ -16,6 +16,7 @@
     "application-development"
   ],
   "displayName": "Fluxzero",
+  "icon": "./assets/brand/fluxzero.png",
   "skills": "./skills/",
   "mcpServers": "./.mcp.json"
 }

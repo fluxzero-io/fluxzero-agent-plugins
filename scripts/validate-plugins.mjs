@@ -89,6 +89,39 @@ const cursorMcp = (await readJson("adapters/cursor/fluxzero/mcp.json")).mcpServe
 const copilotMcp = (await readJson("adapters/copilot/fluxzero/.mcp.json")).mcpServers;
 const gemini = await readJson("gemini-extension.json");
 
+// Each packaged icon must be self-contained; repository-level assets are not
+// available when a client installs only its adapter subdirectory.
+for (const [agent, fields] of Object.entries({
+  codex: ["logo", "composerIcon"],
+  claude: ["icon"],
+  cursor: ["logo"],
+})) {
+  const [adapterRoot, manifestPath] = manifests[agent];
+  const manifest = await readJson(path.posix.join(adapterRoot, manifestPath));
+  const presentation = agent === "codex" ? manifest.interface : manifest;
+  for (const field of fields) {
+    const iconPath = presentation[field];
+    if (typeof iconPath !== "string" || !iconPath.startsWith("./assets/") || iconPath.split("/").includes("..")) {
+      fail(`${agent} ${field} must reference an asset inside its plugin package`);
+      continue;
+    }
+    await assertPath(path.posix.join(adapterRoot, iconPath));
+  }
+}
+const icon = await readFile(path.join(root, config.branding.icon));
+if (icon.length < 24 || !icon.subarray(0, 8).equals(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]))) {
+  fail("brand icon must be a PNG");
+} else {
+  const width = icon.readUInt32BE(16);
+  const height = icon.readUInt32BE(20);
+  if (width !== height || width < 48 || width > 4096 || icon.length > 5 * 1024 * 1024) {
+    fail("brand icon must be square, 48–4096 pixels and at most 5 MiB");
+  }
+}
+for (const field of ["brandColor", "brandColorDark"]) {
+  if (!/^#[0-9A-Fa-f]{6}$/.test(config.branding[field])) fail(`${field} must be an RGB hex color`);
+}
+
 assertEqual(codexMcp["fluxzero-dev"].command, config.devMcpCommand, "Codex dev MCP command");
 assertEqual(codexMcp["fluxzero-dev"].args, config.devMcpArgs, "Codex dev MCP arguments");
 assertEqual(

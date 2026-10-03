@@ -38,6 +38,10 @@ const devMcp = {
 };
 
 const outputs = new Map([
+  ...await Promise.all([adapterPaths.codex, adapterPaths.claude, adapterPaths.cursor].map(async (adapterRoot) => [
+    path.posix.join(adapterRoot, config.branding.icon),
+    await readFile(path.join(root, config.branding.icon)),
+  ])),
   ...await Promise.all(sharedSkillCopies.map(async ([source, target]) => [
     target, await readFile(path.join(root, source), "utf8"),
   ])),
@@ -52,6 +56,10 @@ const outputs = new Map([
       mcpServers: "./.mcp.json",
       interface: {
         displayName: config.displayName,
+        logo: config.branding.icon,
+        composerIcon: config.branding.icon,
+        brandColor: config.branding.brandColor,
+        brandColorDark: config.branding.brandColorDark,
         shortDescription: "Build and extend Fluxzero applications.",
         longDescription:
           "Fluxzero gives Codex a safe workflow for new and existing Java or Kotlin projects, current selectively retrieved documentation, and structured local development feedback.",
@@ -71,6 +79,7 @@ const outputs = new Map([
     json({
       ...commonManifest,
       displayName: config.displayName,
+      icon: config.branding.icon,
       skills: "./skills/",
       mcpServers: "./.mcp.json",
     }),
@@ -80,6 +89,7 @@ const outputs = new Map([
     json({
       name: config.name,
       displayName: config.displayName,
+      logo: config.branding.icon,
       version: config.version,
       description: config.description,
       author: { name: config.author.name },
@@ -259,12 +269,12 @@ for (const [relativePath, expected] of outputs) {
   if (check) {
     let actual;
     try {
-      actual = await readFile(absolutePath, "utf8");
+      actual = await readFile(absolutePath);
     } catch {
       drift.push(`${relativePath} is missing`);
       continue;
     }
-    if (actual !== expected) {
+    if (!actual.equals(Buffer.from(expected))) {
       drift.push(`${relativePath} differs from generated output`);
     }
   } else {

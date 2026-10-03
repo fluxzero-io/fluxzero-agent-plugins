@@ -380,6 +380,33 @@ instructions between agents.
 
 ## Development
 
+### Plugin branding
+
+`plugins.config.json` defines the shared icon and brand colors. The source PNG
+in `assets/brand/` is the existing Fluxzero website mark, with transparency for
+both light and dark backgrounds. The generator copies it into each package that
+declares an icon; edit the source asset rather than the generated copies.
+
+| Client | Presentation support |
+| --- | --- |
+| Codex | Listing logo, composer icon, and light/dark brand colors in `interface`. |
+| Claude Code | `icon` for Anthropic's directory listing. Claude Code ignores it at load time; validation accepts it without warnings from v2.1.281 onward. Older validators can warn, and strict validation can fail. |
+| Cursor | `logo` pointing to the packaged asset. |
+| GitHub Copilot CLI | Shared name, description, author and homepage. Its documented legacy manifest has no logo field. |
+| Gemini CLI | Shared name and description. Its documented extension manifest has no logo field. |
+
+Copilot and Gemini still receive the shared skills and local development MCP
+server. Logo rendering is a separate client capability. The logo metadata used
+by Awesome Copilot's Canvas extension gallery is not a general CLI plugin icon.
+
+References: [Codex](https://developers.openai.com/plugins/deploy/submission),
+[Claude Code](https://code.claude.com/docs/en/plugins-reference#directory-listing-fields),
+[Cursor](https://prod.cursor.com/docs/reference/plugins),
+[Copilot CLI](https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-plugin-reference),
+[Gemini CLI](https://geminicli.com/docs/extensions/reference/).
+
+### Generate and validate
+
 ```bash
 npm run generate
 npm test
