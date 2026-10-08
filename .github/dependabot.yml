@@ -3,10 +3,10 @@ updates:
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "daily"
     open-pull-requests-limit: 10
     groups:
-      github_actions-minor-and-patch:
+      github-actions-patch-and-minor:
         patterns: ["*"]
         update-types: ["minor", "patch"]
     commit-message:
