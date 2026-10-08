@@ -412,6 +412,12 @@ npm run generate
 npm test
 ```
 
+CI uses Node.js 24 LTS. Dependabot checks GitHub Actions daily and groups minor
+and patch updates. Those updates can merge through the Fluxzero Dependabot App
+after the required `validate` check passes against the current main branch.
+Major updates require separate review. The existing version-based release flow
+runs after successful validation on main.
+
 The generators have no third-party runtime dependencies. Validate agent-native
 install flows in isolated home directories before publishing a release.
 
