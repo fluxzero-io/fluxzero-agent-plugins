@@ -1,9 +1,9 @@
 {
   "name": "fluxzero",
-  "version": "0.4.2",
+  "version": "0.5.0",
   "description": "Build and extend Fluxzero applications with verified first-time prerequisites, current SDK guidance, and an automated local development loop.",
   "mcpServers": {
-    "fluxzero-dev": {
+    "fluxzero": {
       "command": "fz",
       "args": [
         "mcp"

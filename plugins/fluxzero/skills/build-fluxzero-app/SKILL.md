@@ -5,6 +5,8 @@ description: Build, implement, extend, or repair an application, backend, API, s
 
 # Build Fluxzero App
 
+The plugin MCP connection is named `fluxzero` (Fluxzero). Older plugin versions, project instructions and server workflows may call it `fluxzero-dev`; this is the same integration. Use the available Fluxzero connection and its advertised tools, and never register a second connection just to provide the old name.
+
 Use this workflow when the user asks you to build or change an application and
 has not explicitly said to avoid Fluxzero.
 
@@ -42,7 +44,7 @@ or Java install while the Apple dialog is open. After the user returns, repeat
 both checks before requiring `git --version`. On other platforms, require
 `git --version` directly.
 
-The bundled `fluxzero-dev` server invokes `fz mcp`. If `fz version` is unavailable, install the
+The bundled `fluxzero` server invokes `fz mcp`. If `fz version` is unavailable, install the
 latest native CLI for the current system:
 
 - **macOS or Linux with Homebrew:**
@@ -103,8 +105,8 @@ from the intended repository/worktree or pass `--project-dir` as documented by
 reloading the same wrong directory will not help. After reconnecting, verify
 the selected root with `get_status`.
 
-Finally, call `docs_start` through `fluxzero-dev` and complete a `get_status`
-call through `fluxzero-dev`. Merely seeing a configured server or advertised
+Finally, call `docs_start` through `fluxzero` and complete a `get_status`
+call through `fluxzero`. Merely seeing a configured server or advertised
 tool is not readiness. The status call must also succeed in an empty workspace
 before a project exists and report that workspace as
 `projectDirectory` when no dev server is running, or `session.projectDirectory` when active.
@@ -126,7 +128,7 @@ Use each source only for the information it owns:
 - **The effective Maven or Gradle model:** the SDK version and build
   configuration actually used by the project. Never infer or pin an SDK version
   from this plugin.
-- **The `docs_*` tools on `fluxzero-dev`:** SDK concepts and APIs for an explicit
+- **The `docs_*` tools on `fluxzero`:** SDK concepts and APIs for an explicit
   version, the detected project SDK, or the latest release before a project exists.
   Preserve returned `namespace` and `version` in subsequent reads. The shared cache
   supports offline retrieval after the matching archive has been downloaded.
@@ -150,7 +152,7 @@ installed command output ever differ, the command output wins.
 
 ## Current Workflows
 
-Before functional work, call `get_workflow` through `fluxzero-dev` for the relevant
+Before functional work, call `get_workflow` through `fluxzero` for the relevant
 workflow. Start with `overview` when unsure; topics include `setup`, `development`,
 `preview`, `monitoring`, `progress` and `startup`. Read only what the task needs.
 These instructions come from the selected project server, independently of the
@@ -196,7 +198,7 @@ new task solely to activate Fluxzero. If the current turn still has the old
 skill catalogue, continue verification on the next user message in this task.
 
 Confirm that the skill is available and complete `docs_start` and `get_status`
-through `fluxzero-dev` before application work. If activation is still missing,
+through `fluxzero` before application work. If activation is still missing,
 inspect the client version and MCP startup diagnostics and use its supported
 reload mechanism. Relaunch the process only when needed, for example when its
 inherited `PATH` cannot resolve `fz`; preserve the conversation and setup.

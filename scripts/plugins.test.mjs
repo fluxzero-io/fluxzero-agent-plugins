@@ -143,7 +143,7 @@ test("activation requires local documentation and status before application work
   ];
   for (const file of files) {
     const content = await readFile(path.join(root, file), "utf8");
-    for (const instruction of ["docs_start", "fluxzero-dev"]) {
+    for (const instruction of ["docs_start", "fluxzero"]) {
       assert.ok(content.includes(instruction), `${file} must require ${instruction}`);
     }
     assert.match(content, /(?:Do not|Never|never) (?:claim readiness|equate|substitute|bypass)/);
@@ -253,14 +253,14 @@ test("all adapters start one local MCP without implicitly starting a project", a
   ];
   for (const mcpPath of paths) {
     const value = JSON.parse(await readFile(path.join(root, mcpPath), "utf8"));
-    assert.deepEqual(Object.keys(value.mcpServers), ["fluxzero-dev"]);
-    assert.equal(value.mcpServers["fluxzero-dev"].command, config.devMcpCommand);
-    assert.deepEqual(value.mcpServers["fluxzero-dev"].args, config.devMcpArgs);
+    assert.deepEqual(Object.keys(value.mcpServers), ["fluxzero"]);
+    assert.equal(value.mcpServers["fluxzero"].command, config.devMcpCommand);
+    assert.deepEqual(value.mcpServers["fluxzero"].args, config.devMcpArgs);
   }
   const gemini = JSON.parse(await readFile(path.join(root, "gemini-extension.json"), "utf8"));
-  assert.deepEqual(Object.keys(gemini.mcpServers), ["fluxzero-dev"]);
-  assert.equal(gemini.mcpServers["fluxzero-dev"].command, config.devMcpCommand);
-  assert.deepEqual(gemini.mcpServers["fluxzero-dev"].args, config.devMcpArgs);
+  assert.deepEqual(Object.keys(gemini.mcpServers), ["fluxzero"]);
+  assert.equal(gemini.mcpServers["fluxzero"].command, config.devMcpCommand);
+  assert.deepEqual(gemini.mcpServers["fluxzero"].args, config.devMcpArgs);
 });
 
 

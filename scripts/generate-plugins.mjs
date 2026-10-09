@@ -117,7 +117,7 @@ const outputs = new Map([
     "plugins/fluxzero/.mcp.json",
     json({
       mcpServers: {
-        "fluxzero-dev": {
+        "fluxzero": {
           ...devMcp,
           // The CLI may still be missing when onboarding resumes after an OS confirmation.
           required: false,
@@ -132,7 +132,7 @@ const outputs = new Map([
     "adapters/claude/fluxzero/.mcp.json",
     json({
       mcpServers: {
-        "fluxzero-dev": {
+        "fluxzero": {
           type: "stdio",
           ...devMcp,
         },
@@ -143,7 +143,7 @@ const outputs = new Map([
     "adapters/cursor/fluxzero/mcp.json",
     json({
       mcpServers: {
-        "fluxzero-dev": devMcp,
+        "fluxzero": devMcp,
       },
     }),
   ],
@@ -151,7 +151,7 @@ const outputs = new Map([
     "adapters/copilot/fluxzero/.mcp.json",
     json({
       mcpServers: {
-        "fluxzero-dev": {
+        "fluxzero": {
           type: "stdio",
           ...devMcp,
           tools: ["*"],
@@ -252,7 +252,7 @@ const outputs = new Map([
       version: config.version,
       description: config.description,
       mcpServers: {
-        "fluxzero-dev": {
+        "fluxzero": {
           ...devMcp,
           timeout: 120000,
         },
