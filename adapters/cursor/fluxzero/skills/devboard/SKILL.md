@@ -5,7 +5,9 @@ description: Open the Fluxzero Devboard for the current project, or return its c
 
 # Open Devboard
 
-Use the project's `fluxzero-dev` MCP connection. Read `get_workflow` with topic
+The plugin MCP connection is named `fluxzero` (Fluxzero). Older plugin versions, project instructions and server workflows may call it `fluxzero-dev`; this is the same integration. Use the available Fluxzero connection and its advertised tools, and never register a second connection just to provide the old name.
+
+Use the project's `fluxzero` MCP connection. Read `get_workflow` with topic
 `preview` for current URL discovery, supported pages and opening behavior.
 Check the selected project and reuse its running environment. If development
 must start, use the supported MCP start action and reread the workflow afterward.

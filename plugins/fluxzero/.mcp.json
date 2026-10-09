@@ -1,6 +1,6 @@
 {
   "mcpServers": {
-    "fluxzero-dev": {
+    "fluxzero": {
       "command": "fz",
       "args": [
         "mcp"

@@ -1,6 +1,6 @@
 {
   "mcpServers": {
-    "fluxzero-dev": {
+    "fluxzero": {
       "type": "stdio",
       "command": "fz",
       "args": [

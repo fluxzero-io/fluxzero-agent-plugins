@@ -122,25 +122,25 @@ for (const field of ["brandColor", "brandColorDark"]) {
   if (!/^#[0-9A-Fa-f]{6}$/.test(config.branding[field])) fail(`${field} must be an RGB hex color`);
 }
 
-assertEqual(codexMcp["fluxzero-dev"].command, config.devMcpCommand, "Codex dev MCP command");
-assertEqual(codexMcp["fluxzero-dev"].args, config.devMcpArgs, "Codex dev MCP arguments");
+assertEqual(codexMcp["fluxzero"].command, config.devMcpCommand, "Codex dev MCP command");
+assertEqual(codexMcp["fluxzero"].args, config.devMcpArgs, "Codex dev MCP arguments");
 assertEqual(
-  claudeMcp["fluxzero-dev"],
+  claudeMcp["fluxzero"],
   { type: "stdio", command: config.devMcpCommand, args: config.devMcpArgs },
   "Claude dev MCP configuration",
 );
-assertEqual(cursorMcp["fluxzero-dev"], { command: config.devMcpCommand, args: config.devMcpArgs }, "Cursor dev MCP configuration");
-assertEqual(copilotMcp["fluxzero-dev"].command, config.devMcpCommand, "Copilot dev MCP command");
-assertEqual(copilotMcp["fluxzero-dev"].args, config.devMcpArgs, "Copilot dev MCP arguments");
+assertEqual(cursorMcp["fluxzero"], { command: config.devMcpCommand, args: config.devMcpArgs }, "Cursor dev MCP configuration");
+assertEqual(copilotMcp["fluxzero"].command, config.devMcpCommand, "Copilot dev MCP command");
+assertEqual(copilotMcp["fluxzero"].args, config.devMcpArgs, "Copilot dev MCP arguments");
 assertEqual(gemini.name, config.name, "Gemini extension name");
 assertEqual(gemini.version, config.version, "Gemini extension version");
-assertEqual(gemini.mcpServers["fluxzero-dev"].command, config.devMcpCommand, "Gemini dev MCP command");
-assertEqual(gemini.mcpServers["fluxzero-dev"].args, config.devMcpArgs, "Gemini dev MCP arguments");
+assertEqual(gemini.mcpServers["fluxzero"].command, config.devMcpCommand, "Gemini dev MCP command");
+assertEqual(gemini.mcpServers["fluxzero"].args, config.devMcpArgs, "Gemini dev MCP arguments");
 
 for (const servers of [codexMcp, claudeMcp, cursorMcp, copilotMcp, gemini.mcpServers]) {
-  assertEqual(Object.keys(servers), ["fluxzero-dev"], "one local MCP for documentation and development");
+  assertEqual(Object.keys(servers), ["fluxzero"], "one local MCP for documentation and development");
 }
-assertEqual(codexMcp["fluxzero-dev"].required, false, "MCP startup must allow incomplete CLI onboarding");
+assertEqual(codexMcp["fluxzero"].required, false, "MCP startup must allow incomplete CLI onboarding");
 
 const marketplaces = {
   codex: [".agents/plugins/marketplace.json", "./plugins/fluxzero"],

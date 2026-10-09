@@ -10,6 +10,16 @@ contains the shared application-building workflow with an optional agent-specifi
 Install the package for your coding agent once; projects do not need
 hand-maintained Fluxzero manuals or duplicate MCP registrations.
 
+## MCP connection name
+
+The plugin MCP connection is named `fluxzero` (Fluxzero). Older plugin versions, project instructions and server workflows may call it `fluxzero-dev`; this is the same integration. Use the available Fluxzero connection and its advertised tools, and never register a second connection just to provide the old name.
+
+Version 0.5.0 renames the bundled MCP registration from `fluxzero-dev` to
+`fluxzero` across all clients. Tool names, arguments and `fz mcp` stay the same.
+Update any manually configured tool allowlists keyed by the old server name;
+refresh plugin tools through the client’s native reload mechanism. Existing
+chat history can retain the old name. Do not add a second server as an alias.
+
 ## Open Devboard
 
 The `devboard` skill opens the current project's Devboard using its live MCP
@@ -164,9 +174,9 @@ Version-sensitive knowledge stays with the component that owns it:
 | Information | Authoritative source |
 |:------------|:---------------------|
 | CLI installation and stable working agreements | This plugin |
-| Current dev-server workflows | `get_workflow` on `fluxzero-dev` |
+| Current dev-server workflows | `get_workflow` on `fluxzero` |
 | SDK version used by a project | Its effective Maven or Gradle model |
-| SDK concepts and APIs for the selected version | The `docs_*` tools on `fluxzero-dev` |
+| SDK concepts and APIs for the selected version | The `docs_*` tools on `fluxzero` |
 | Current CLI commands | `fz --help` |
 | Current dev actions and options | `fz dev --help` |
 | `.fluxzero/dev.yaml` schema and defaults | `fz dev config` |
@@ -191,7 +201,7 @@ Every package provides the same workflow:
   coherent edit
 - implement and test a real Fluxzero application rather than a generic service
 
-`fluxzero-dev` runs `fz mcp` in the selected workspace. Its `docs_*` tools use
+`fluxzero` runs `fz mcp` in the selected workspace. Its `docs_*` tools use
 versioned archives in the shared local cache; warm cached documentation works offline.
 The same MCP interface forwards project status, problems, logs and test feedback once
 a dev environment is running. With a dev-server distribution that includes Devboard
@@ -224,7 +234,7 @@ session. `nohup` alone does not isolate a Unix process group from tool cleanup.
 Verify fresh project status and the URL after the launching command exits before
 reporting that an environment will remain available.
 
-When `fluxzero-dev` is active, agents must not run duplicate wrapper tests,
+When `fluxzero` is active, agents must not run duplicate wrapper tests,
 applications, watchers, or continuous log commands. Project wrappers remain
 available for CI and releases; CI owns full regression coverage. The Dev Server
 chooses and runs impacted tests. An agent observes those results, makes a new or
@@ -326,8 +336,8 @@ Preserve the current directory, checkout, and user's request. A stale inherited
 when the agent cannot perform it itself.
 
 After activation in the current conversation, confirm that the `build-fluxzero-app` skill is
-available, call `docs_start` through `fluxzero-dev`, and complete a
-`get_status` call through `fluxzero-dev` before application work. Merely seeing
+available, call `docs_start` through `fluxzero`, and complete a
+`get_status` call through `fluxzero` before application work. Merely seeing
 the development server in configuration or a tool catalogue is not readiness.
 In an empty workspace, the status call must still succeed and identify that
 workspace as its project directory. If either completed call is unavailable,
