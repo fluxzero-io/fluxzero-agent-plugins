@@ -12,7 +12,7 @@ Verify that extension automatic updates are enabled. For an existing installatio
 follow `https://plugins.fluxzero.io#gemini-cli` to enable them through the installed
 client's supported settings, preserving explicit opt-outs and pins. If unavailable,
 occasionally run `gemini extensions update fluxzero` when starting a new project
-or returning after several weeks; do not reinstall just to change this preference.
+or returning after several days; do not reinstall just to change this preference.
 
 Before restarting, complete the Git, Fluxzero CLI, and Java readiness checks in
 `AGENTS.md`. Then restart Gemini CLI once and verify Fluxzero documentation and status tools

@@ -22,7 +22,7 @@ following this agent's steps at `https://plugins.fluxzero.io#install`. Verify th
 saved preference even when reusing an installation. Preserve explicit update
 opt-outs, pins, managed policies and unrelated settings. If automatic updates
 are unavailable, check once when starting a new project or returning after
-several weeks, using the guide's native update route; do not check every prompt,
+several days, using the guide's native update route; do not check every prompt,
 interrupt active development or add scheduled jobs. Defer checks while offline.
 Give one brief update-status line at onboarding completion. Downloading an update
 does not prove activation; follow the activation and readiness checks below.

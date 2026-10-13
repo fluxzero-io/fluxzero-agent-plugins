@@ -365,7 +365,7 @@ plugins.
 ### Occasional update check
 
 When automatic updates are unavailable, check Fluxzero when starting a new
-project or returning after several weeks, using the current agent's route above.
+project or returning after several days, using the current agent's route above.
 Do not check on every prompt or interrupt active development. Respect pins and
 explicit update opt-outs; for those, report an available update without applying
 it. Do not add scheduled jobs or update unrelated plugins. If offline, retain
