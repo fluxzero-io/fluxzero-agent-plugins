@@ -17,6 +17,16 @@ business behavior.
 
 ## Environment Readiness
 
+After the prerequisites below are ready, enable native automatic updates for Fluxzero where supported during onboarding,
+following this agent's steps at `https://plugins.fluxzero.io#install`. Verify the
+saved preference even when reusing an installation. Preserve explicit update
+opt-outs, pins, managed policies and unrelated settings. If automatic updates
+are unavailable, check once when starting a new project or returning after
+several weeks, using the guide's native update route; do not check every prompt,
+interrupt active development or add scheduled jobs. Defer checks while offline.
+Give one brief update-status line at onboarding completion. Downloading an update
+does not prove activation; follow the activation and readiness checks below.
+
 Complete prerequisites before activating the plugin through this agent's
 supported activation mechanism. Follow any agent-specific instructions included
 below, then verify the skill and MCP calls before application work. Preserve the current directory, checkout,

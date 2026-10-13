@@ -251,6 +251,14 @@ Before installing, check the agent's native plugin or extension listing and
 reuse an existing installation. Installation or an update does not by itself
 require a new conversation; verify activation in the current conversation.
 
+As part of onboarding, enable native automatic updates for Fluxzero using the
+agent-specific steps below, including when reusing an installation. Preserve
+explicit user opt-outs, pinned versions and managed policies. Change only the
+Fluxzero entry and preserve other settings. Verify the saved preference; an
+installed or enabled plugin does not prove that automatic updates are on.
+When the installed client or distribution route cannot enable them, use the
+[occasional update check](#occasional-update-check) instead.
+
 ### Codex
 
 ```bash
@@ -264,12 +272,28 @@ If `codex` is not on `PATH`, the Codex desktop application bundles the same
 command at `/Applications/ChatGPT.app/Contents/Resources/codex`; use that
 absolute executable for all three commands. Keep the current task.
 
+For this custom Git marketplace, no supported automatic-update setting is
+documented. Occasionally refresh just Fluxzero with
+`codex plugin marketplace upgrade fluxzero`, then check
+`codex plugin list --json` and activate any changed tools through the normal
+Codex activation flow below. The refresh can update installed files; it is not
+a read-only check. Keep the configured source and ref.
+
 ### Claude Code
 
 ```bash
 claude plugin marketplace add fluxzero-io/fluxzero-agent-plugins
 claude plugin install fluxzero@fluxzero
 ```
+
+Enable automatic updates for the `fluxzero` marketplace. Set
+`extraKnownMarketplaces.fluxzero.autoUpdate` to `true` in the active user settings
+(normally `~/.claude/settings.json`, or under `CLAUDE_CONFIG_DIR`), preserving
+the registered source and all other fields. Alternatively use `/plugin` →
+**Marketplaces** → **fluxzero** → **Enable auto-update**. Verify the effective
+preference in that menu, including higher-priority settings and any global
+update-disable environment variables; do not override an explicit opt-out.
+See [Claude Code's update rules](https://code.claude.com/docs/en/plugins/loading#which-marketplaces-and-plugins-auto-update).
 
 Recent Claude Code versions apply installations from the `/plugin` menu when
 you close it. For an external CLI installation or pending changes, use
@@ -288,11 +312,32 @@ For local verification before marketplace approval, copy
 `adapters/cursor/fluxzero` to `~/.cursor/plugins/local/fluxzero`, but defer the
 Cursor reload until the final activation step below.
 
+For an existing GitHub-backed team marketplace dedicated to Fluxzero, enable **Auto Refresh** in
+**Dashboard → Plugins & MCPs → Team Marketplaces → Marketplace Settings** when
+the user has marketplace-management access and the Cursor GitHub App is already
+installed on the repository. Verify the saved setting. This refreshes the team
+catalog after pushes; it is not a per-user toggle for local plugins. Do not
+change update policy for other team plugins, create a team marketplace or
+install a GitHub App merely to enable updates.
+
+Otherwise, occasionally check Fluxzero in Cursor's plugin manager and apply
+available updates. For a local copy, compare its manifest version with the
+source repository and refresh `adapters/cursor/fluxzero` from the selected
+release, preserving local edits, then reload Cursor when needed.
+See [Cursor's marketplace update guide](https://cursor.com/docs/plugins#keep-plugins-up-to-date).
+
 ### Gemini CLI
 
 ```bash
-gemini extensions install https://github.com/fluxzero-io/fluxzero-agent-plugins --consent
+gemini extensions install https://github.com/fluxzero-io/fluxzero-agent-plugins --consent --auto-update
 ```
+
+The `--auto-update` flag enables updates for this extension. For an existing
+installation, inspect `gemini extensions --help` and its extension settings for
+a supported way to enable the preference without reinstalling or losing a ref
+or local settings. If unavailable, use the occasional check with
+`gemini extensions update fluxzero`; do not confuse CLI self-updates with
+extension updates. See [Gemini's extension reference](https://geminicli.com/docs/extensions/reference/).
 
 Defer the Gemini CLI restart until the final activation step below.
 
@@ -303,9 +348,35 @@ copilot plugin marketplace add fluxzero-io/fluxzero-agent-plugins
 copilot plugin install fluxzero@fluxzero
 ```
 
+Set `autoUpdate: true` on the `fluxzero` entry under `extraKnownMarketplaces`
+in the active **user** settings (normally `~/.copilot/settings.json`, or under
+`COPILOT_HOME`), preserving the registered source and other fields. Verify the
+saved entry and effective settings. Repository settings cannot enable this
+preference. Automatic plugin updates run in interactive and `-p` sessions, not
+SDK or server sessions; global update-disable settings can also prevent them.
+For those cases or older clients without this setting, occasionally run
+`copilot plugin update fluxzero@fluxzero`.
+See [Copilot's plugin update reference](https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-plugin-reference#copilot-plugin-update-options).
+
 Defer the new Copilot CLI session until the final activation step below. The
 same plugin components are also available to Copilot app clients that use CLI
 plugins.
+
+### Occasional update check
+
+When automatic updates are unavailable, check Fluxzero when starting a new
+project or returning after several weeks, using the current agent's route above.
+Do not check on every prompt or interrupt active development. Respect pins and
+explicit update opt-outs; for those, report an available update without applying
+it. Do not add scheduled jobs or update unrelated plugins. If offline, retain
+the working installation and defer the check.
+
+Finish onboarding with one brief update-status line: automatic updates enabled,
+an existing opt-out preserved, or "Fluxzero plugin updates are manual here;
+check occasionally in the plugin manager or ask your agent to update Fluxzero."
+Mention any required native action only when the agent cannot perform it.
+After an update, use the client's supported activation flow and verify the
+skill, documentation and status tools; downloading is not activation.
 
 ### Verify readiness, then activate once
 

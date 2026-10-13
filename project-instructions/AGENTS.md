@@ -18,6 +18,8 @@ If the skill or `fluxzero` server is unavailable, follow the complete onboarding
 
 Use the versioned graph through the local plugin/MCP as the managed documentation source. Do not add hand-maintained Fluxzero manuals or duplicate the Fluxzero MCP configuration in this project.
 
+During onboarding, follow `https://plugins.fluxzero.io#install` to enable native automatic updates for Fluxzero where supported and verify the saved preference. Preserve explicit update opt-outs, pins and managed policies. When automatic updates are unavailable, check once when starting a new project or returning after several weeks; do not check every prompt, interrupt active work or add scheduled jobs. Defer checks while offline and give one brief update-status line at onboarding completion.
+
 ## Functional progress
 
 Follow the plugin's Functional Progress workflow to keep `.fluxzero/progress.yaml`
