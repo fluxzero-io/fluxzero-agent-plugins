@@ -143,6 +143,33 @@ This bridge affects only applications launched afterward; it does not update
 an already-running Codex/ChatGPT process. The login-shell configuration remains
 the persistent installation state.
 
+### Automatic CLI updates
+
+After verifying the CLI, inspect `fz upgrade --help`. When it lists `--auto-update`,
+enable the default for all supported coding agents and read back the saved preference:
+
+```bash
+fz upgrade --auto-update enable-if-unset
+fz upgrade --auto-update status
+```
+
+This configures the CLI without upgrading immediately. Ordinary CLI use checks in a
+separate background process at most once every three days and installs newer stable
+releases within the current major through the original installer. Running development
+environments and project SDK dependencies remain unchanged. These settings are
+independent of [automatic plugin updates](#install).
+
+Preserve explicit opt-outs, package-manager pins and managed policies. The onboarding
+command leaves an existing preference intact; `fz upgrade --auto-update disable`
+disables updates explicitly. `FLUXZERO_CLI_AUTO_UPDATE=false` and `CI=true` suppress
+background updates even when enabled. Read-only installations, unavailable packages
+and network failures are deferred without blocking normal CLI use.
+
+If an older CLI does not support the option, briefly report that automatic CLI updates
+require a newer CLI. Use its owning installer's normal upgrade route when appropriate,
+respecting existing pins and policies; continue supported work without repeated checks
+or prompts. Include CLI and plugin update status in the brief onboarding summary.
+
 ### Java 25
 
 The Fluxzero CLI checks Java when local development starts. If Java 25 is

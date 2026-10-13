@@ -17,7 +17,7 @@ business behavior.
 
 ## Environment Readiness
 
-After the prerequisites below are ready, enable native automatic updates for Fluxzero where supported during onboarding,
+After the prerequisites below are ready, enable native automatic plugin updates for Fluxzero where supported during onboarding,
 following this agent's steps at `https://plugins.fluxzero.io#install`. Verify the
 saved preference even when reusing an installation. Preserve explicit update
 opt-outs, pins, managed policies and unrelated settings. If automatic updates
@@ -80,6 +80,16 @@ resolve the exact development command:
 env -i HOME="$HOME" USER="$USER" LOGNAME="$LOGNAME" SHELL=/bin/zsh \
   /bin/zsh -l -c 'command -v fz && fz version && fz mcp --help && fz init --help'
 ```
+
+During onboarding, inspect `fz upgrade --help`. When it supports `--auto-update`, run
+`fz upgrade --auto-update enable-if-unset`, then `fz upgrade --auto-update status`.
+This enables background CLI updates at most once every three days within the current
+stable major, while preserving an existing opt-out. Preserve package-manager pins,
+managed policies and environment opt-outs; do not clear them to enable updates.
+If the installed CLI lacks this option, report that automatic CLI updates require a
+newer CLI and defer to its owning installer's normal upgrade route; continue supported
+work without retrying every prompt. CLI and plugin update preferences are separate.
+Do not upgrade project SDK dependencies or restart an active environment for this setup.
 
 Require MCP help to succeed, init help to list `--in-place`, and the activated MCP to expose `start_dev`.
 On macOS, also ensure that the directory containing `fz`
