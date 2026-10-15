@@ -19,11 +19,14 @@ business behavior.
 
 After the prerequisites below are ready, enable native automatic plugin updates for Fluxzero where supported during onboarding,
 following this agent's steps at `https://plugins.fluxzero.io#install`. Verify the
-saved preference even when reusing an installation. Preserve explicit update
+saved preference when the client exposes one, even when reusing an installation;
+otherwise follow its built-in update behavior in the guide. Preserve explicit update
 opt-outs, pins, managed policies and unrelated settings. If automatic updates
 are unavailable, check once when starting a new project or returning after
 several days, using the guide's native update route; do not check every prompt,
-interrupt active development or add scheduled jobs. Defer checks while offline.
+interrupt active development or add scheduled jobs. For Codex, rely on its
+Git-marketplace update at Codex app-server startup; only add a manual check
+when the Codex app has remained open for several days. Defer checks while offline.
 Give one brief update-status line at onboarding completion. Downloading an update
 does not prove activation; follow the activation and readiness checks below.
 

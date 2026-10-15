@@ -1,3 +1,16 @@
+## Codex plugin updates
+
+Codex refreshes configured Git marketplaces in the background when its own
+app server starts. This is unrelated to the Fluxzero Dev Server, and opening
+a new chat need not restart it. Rely on this built-in behavior; no extra setting
+or startup hook is needed. Preserve the marketplace source, ref and managed
+policies. Only if Codex stays open for several days, run
+`codex plugin marketplace upgrade fluxzero` once and verify the installed version
+with `codex plugin list --marketplace fluxzero --json`. Defer while offline and
+retain the working installation. Do not check per prompt or per new project
+in a recently started app. Report automatic updates at Codex startup, with an
+occasional manual check during prolonged uptime. Follow activation below.
+
 ## Codex activation
 
 After installation or upgrade, keep the current conversation, directory and

@@ -281,8 +281,9 @@ require a new conversation; verify activation in the current conversation.
 As part of onboarding, enable native automatic updates for Fluxzero using the
 agent-specific steps below, including when reusing an installation. Preserve
 explicit user opt-outs, pinned versions and managed policies. Change only the
-Fluxzero entry and preserve other settings. Verify the saved preference; an
-installed or enabled plugin does not prove that automatic updates are on.
+Fluxzero entry and preserve other settings. Verify the saved preference when the client exposes one; otherwise follow its
+built-in update behavior described below. An installed or enabled plugin alone
+does not prove that an update check completed.
 When the installed client or distribution route cannot enable them, use the
 [occasional update check](#occasional-update-check) instead.
 
@@ -299,12 +300,24 @@ If `codex` is not on `PATH`, the Codex desktop application bundles the same
 command at `/Applications/ChatGPT.app/Contents/Resources/codex`; use that
 absolute executable for all three commands. Keep the current task.
 
-For this custom Git marketplace, no supported automatic-update setting is
-documented. Occasionally refresh just Fluxzero with
-`codex plugin marketplace upgrade fluxzero`, then check
-`codex plugin list --json` and activate any changed tools through the normal
-Codex activation flow below. The refresh can update installed files; it is not
-a read-only check. Keep the configured source and ref.
+Codex automatically refreshes configured Git marketplaces in the background
+when its own app server starts. This is the Codex app's background process,
+not the Fluxzero Dev Server; opening a new chat does not necessarily restart it.
+Use this built-in behavior without adding an update switch, startup hook or
+scheduler. Keep the configured source and ref, including explicit pins and
+managed policies. Startup initiates a check; it does not guarantee that a
+network update has completed.
+
+Only when Codex has remained open for several days, refresh Fluxzero once with
+`codex plugin marketplace upgrade fluxzero`, then verify the installed version
+with `codex plugin list --marketplace fluxzero --json` and follow the activation
+instructions below. Do not repeat this on every prompt or for every new project
+in a recently started app. If offline, keep the working installation and defer
+the check. Report this as "automatic at Codex startup; occasional check when
+the app stays open for days", rather than "manual updates only".
+
+Periodic checks while Desktop remains open are tracked in
+[Codex issue #38401](https://github.com/openai/codex/issues/38401).
 
 ### Claude Code
 
@@ -393,12 +406,15 @@ plugins.
 
 When automatic updates are unavailable, check Fluxzero when starting a new
 project or returning after several days, using the current agent's route above.
+For Codex, use its startup update behavior and only perform the extra check
+when the app has remained open for several days.
 Do not check on every prompt or interrupt active development. Respect pins and
 explicit update opt-outs; for those, report an available update without applying
 it. Do not add scheduled jobs or update unrelated plugins. If offline, retain
 the working installation and defer the check.
 
 Finish onboarding with one brief update-status line: automatic updates enabled,
+automatic at Codex startup with an occasional check during prolonged uptime,
 an existing opt-out preserved, or "Fluxzero plugin updates are manual here;
 check occasionally in the plugin manager or ask your agent to update Fluxzero."
 Mention any required native action only when the agent cannot perform it.
