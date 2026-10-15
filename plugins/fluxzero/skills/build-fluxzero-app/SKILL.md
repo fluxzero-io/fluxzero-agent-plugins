@@ -19,11 +19,14 @@ business behavior.
 
 After the prerequisites below are ready, enable native automatic plugin updates for Fluxzero where supported during onboarding,
 following this agent's steps at `https://plugins.fluxzero.io#install`. Verify the
-saved preference even when reusing an installation. Preserve explicit update
+saved preference when the client exposes one, even when reusing an installation;
+otherwise follow its built-in update behavior in the guide. Preserve explicit update
 opt-outs, pins, managed policies and unrelated settings. If automatic updates
 are unavailable, check once when starting a new project or returning after
 several days, using the guide's native update route; do not check every prompt,
-interrupt active development or add scheduled jobs. Defer checks while offline.
+interrupt active development or add scheduled jobs. For Codex, rely on its
+Git-marketplace update at Codex app-server startup; only add a manual check
+when the Codex app has remained open for several days. Defer checks while offline.
 Give one brief update-status line at onboarding completion. Downloading an update
 does not prove activation; follow the activation and readiness checks below.
 
@@ -208,6 +211,19 @@ matters to the request.
   Keep one writer per feature slice; use the authenticated user for actor-scoped actions.
 - Report results and any unresolved limitations accurately. Missing tools or empty
   logs do not prove success and do not authorize bypassing the managed workflow.
+
+## Codex plugin updates
+
+Codex refreshes configured Git marketplaces in the background when its own
+app server starts. This is unrelated to the Fluxzero Dev Server, and opening
+a new chat need not restart it. Rely on this built-in behavior; no extra setting
+or startup hook is needed. Preserve the marketplace source, ref and managed
+policies. Only if Codex stays open for several days, run
+`codex plugin marketplace upgrade fluxzero` once and verify the installed version
+with `codex plugin list --marketplace fluxzero --json`. Defer while offline and
+retain the working installation. Do not check per prompt or per new project
+in a recently started app. Report automatic updates at Codex startup, with an
+occasional manual check during prolonged uptime. Follow activation below.
 
 ## Codex activation
 
