@@ -192,6 +192,15 @@ matters to the request.
 
 - Build a real Fluxzero application. Preserve existing project structure and
   unrelated work; use the CLI starter for a new, empty project.
+- Preserve the official starter's infrastructure when deferring product features.
+  "No UI or integrations yet" does not authorize removing user identity, provider
+  registration, required dependencies or test support. Before removing starter
+  code, inspect its consumers and registration paths; remove only what is truly
+  unnecessary for the requested scope. After a relevant change, verify a real
+  domain command with an explicit user and its observable authorization/state
+  outcome through the managed test loop. Compilation or an empty test baseline
+  does not prove that identity propagation still works. Use version-matched SDK
+  documentation for the provider and fixture setup.
 - Let the managed environment own builds, watching and test execution. Follow
   its structured feedback through completion; never start duplicate processes
   or rerun full suites merely for reassurance. CI owns full regression coverage.
