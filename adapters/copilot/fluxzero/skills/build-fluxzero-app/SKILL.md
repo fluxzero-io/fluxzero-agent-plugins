@@ -236,17 +236,22 @@ First consult the version-matched documentation, installed command help and
 relevant workflow, and rule out application configuration, usage, and a known
 version mismatch. Record the affected component version without changing the
 project, check whether the current release already fixes or documents the
-behavior, and search open and closed issues. If an existing issue covers it, do
-not create a duplicate; offer its link or a sanitized comment draft instead.
+behavior, and search open and closed issues. Treat external search queries as
+disclosures: use only sanitized Fluxzero component terms, versions, and generic
+error identifiers, never project-derived text. If an existing issue covers it,
+do not create a duplicate; offer its link or a sanitized comment draft instead.
+If ownership is unclear, show the possible repositories and do not cross-post.
 
 Only offer to post directly when an already authenticated GitHub route is
 available, such as `gh` with valid authentication or an authenticated GitHub
 connector or browser session. Verify access without starting a new login solely
-to report an issue. Prepare a concise title and body, show the exact sanitized
-draft to the user, and obtain explicit permission before any public write,
-including a comment. General permission to work on the project is not
-permission to publish. Without an authenticated route, give the user the draft
-and continue the requested work without blocking on it.
+to report an issue, and identify the active GitHub account. Prepare a concise
+title and body. Show the exact sanitized draft, target repository, publishing
+account, and public visibility to the user, and obtain explicit permission
+before any public write, including a comment. General permission to work on the
+project is not permission to publish. If permission is declined, do not publish
+or ask again unless the user reopens the topic. Without an authenticated route,
+give the user the draft and continue the requested work without blocking on it.
 
 Treat the issue and its draft as public. Use generic placeholders and the
 smallest synthetic reproduction. Include only relevant Fluxzero component
@@ -262,5 +267,6 @@ private sanitized draft for the user.
 Never disclose a suspected vulnerability, credential exposure, or privacy or
 security incident in a public issue or comment. Read the owning repository's
 `SECURITY.md` and use its private reporting route. Show the sanitized private
-report and obtain explicit permission before submitting it; never include
-production secrets or customer data even in a private report.
+report and obtain explicit permission before submitting it. Apply the same
+project-context exclusions and data minimization to private reports; never
+include production secrets or customer data.

@@ -256,16 +256,20 @@ in the owning repository:
 The agent first checks version-matched documentation, installed command help,
 the affected and current component versions, and open and closed issues. It
 rules out application configuration, usage, known version mismatches, and fixes
-already present in the current release. It does not create a duplicate issue;
-when appropriate it offers an existing link or sanitized comment draft.
+already present in the current release. External searches use only sanitized
+Fluxzero component terms, versions, and generic error identifiers because the
+query itself is a disclosure. It does not create a duplicate issue or cross-post
+when ownership is unclear; when appropriate it offers an existing link or
+sanitized comment draft.
 
 Direct reporting is limited to an already authenticated GitHub route, such as
 `gh` with valid authentication or an authenticated connector or browser
 session. The agent verifies access without starting a new login, prepares the
-exact sanitized title and body, shows that draft to the user, and obtains
-explicit user permission before any public write, including a comment. Without
-authenticated access it leaves the user a sanitized draft and continues the
-requested work.
+exact sanitized title and body, and identifies the active GitHub account. It
+shows the draft, target repository, publishing account, and public visibility
+to the user, then obtains explicit permission before any public write, including
+a comment. A refusal is not revisited unless the user reopens the topic. Without
+authenticated access the agent leaves a sanitized draft and continues the work.
 
 Every draft is treated as public and uses generic placeholders plus the
 smallest synthetic reproduction. It may include relevant component versions,
@@ -279,7 +283,8 @@ require that context, the agent must not publish it.
 Suspected vulnerabilities, credential exposure, and privacy or security
 incidents never go into a public issue or comment. The agent reads the owning
 repository's `SECURITY.md`, uses its private reporting route, and still shows a
-sanitized private draft and obtains explicit permission before submission.
+sanitized private draft and obtains explicit permission before submission. The
+same project-context exclusions and data minimization apply to private reports.
 
 For a new or empty workspace, complete a `get_status` call and confirm its
 `projectDirectory`. `dev-server-not-running` is a valid bootstrap status.
