@@ -24,33 +24,47 @@ During onboarding, inspect `fz upgrade --help`; when `--auto-update` is supporte
 
 ## Reporting Fluxzero product issues
 
-When application work exposes a probable Fluxzero product defect or missing
-capability, rather than an application-specific bug, tell the user and offer a
-public GitHub issue in the owning repository:
+When evidence points to a Fluxzero product defect or missing capability rather
+than an application-specific bug, tell the user and offer to report it in the
+owning repository:
 
 - SDK: `https://github.com/fluxzero-io/fluxzero-sdk-java`
 - CLI: `https://github.com/fluxzero-io/fluxzero-cli`
 - Agent plugin: `https://github.com/fluxzero-io/fluxzero-agent-plugins`
 - Dev Server and Devboard: `https://github.com/fluxzero-io/fluxzero-dev-server`
 
+First consult the version-matched documentation, installed command help and
+relevant workflow, and rule out application configuration, usage, and a known
+version mismatch. Record the affected component version without changing the
+project, check whether the current release already fixes or documents the
+behavior, and search open and closed issues. If an existing issue covers it, do
+not create a duplicate; offer its link or a sanitized comment draft instead.
+
 Only offer to post directly when an already authenticated GitHub route is
 available, such as `gh` with valid authentication or an authenticated GitHub
-connector or browser session. Do not start a new login solely to report an
-issue. Search for a matching open issue first. Then prepare a concise issue
-title and body, show the exact draft to the user, and obtain explicit permission
-before any public write. General permission to work on the project is not
-permission to publish an issue. Without an authenticated route, give the user
-the sanitized draft and continue the requested work without blocking on it.
+connector or browser session. Verify access without starting a new login solely
+to report an issue. Prepare a concise title and body, show the exact sanitized
+draft to the user, and obtain explicit permission before any public write,
+including a comment. General permission to work on the project is not
+permission to publish. Without an authenticated route, give the user the draft
+and continue the requested work without blocking on it.
 
 Treat the issue and its draft as public. Use generic placeholders and the
 smallest synthetic reproduction. Include only relevant Fluxzero component
-versions, platform details, sanitized reproduction steps, and expected versus
-actual behavior. Never copy project or repository names, private source code or
-configuration, raw logs, stack traces, traces, payloads, local paths,
-environment values, identifiers, URLs, branch names, user or customer data,
-business details, credentials, or secrets from the project. If an actionable
-report cannot be written without such context, do not publish it; explain the
-limit and leave a private sanitized draft for the user.
+versions, platform details, sanitized reproduction steps, expected versus
+actual behavior, and a manually rewritten, minimal error excerpt when essential.
+Never paste project or repository names, private source code or configuration,
+raw logs, stack traces, traces, payloads, local paths, environment values,
+identifiers, URLs, branch names, user or customer data, business details,
+credentials, or secrets from the project. If an actionable report cannot be
+written without such context, do not publish it; explain the limit and leave a
+private sanitized draft for the user.
+
+Never disclose a suspected vulnerability, credential exposure, or privacy or
+security incident in a public issue or comment. Read the owning repository's
+`SECURITY.md` and use its private reporting route. Show the sanitized private
+report and obtain explicit permission before submitting it; never include
+production secrets or customer data even in a private report.
 
 ## Functional progress
 

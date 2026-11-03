@@ -261,11 +261,18 @@ test("agents offer privacy-safe GitHub issues only with authentication and permi
       assert.ok(content.includes(repository), `${file} must route issues to ${repository}`);
     }
     assert.match(content, /already authenticated GitHub route/i);
-    assert.match(content, /show(?:s)? (?:that|the exact) draft|exact\s+title and body/i);
+    assert.match(content, /version-matched documentation/i);
+    assert.match(content, /open and closed issues/i);
+    assert.match(content, /do(?:es)?\s+not\s+create a duplicate/i);
+    assert.match(content, /show(?:s)?\s+(?:that|the exact sanitized)\s+draft|exact sanitized\s+title and body/i);
     assert.match(content, /explicit\s+(?:user\s+)?permission/i);
     assert.match(content, /smallest synthetic reproduction/i);
-    assert.match(content, /project or repository names/i);
-    assert.match(content, /do not (?:publish|start a new login)|must not publish/i);
+    assert.match(content, /manually rewritten,?\s+(?:a )?minimal error excerpt/i);
+    assert.match(content, /project or repository\s+names/i);
+    assert.match(content, /SECURITY\.md/);
+    assert.match(content, /public issue or comment/i);
+    assert.match(content, /private reporting route/i);
+    assert.match(content, /do not publish|must not publish|never paste/i);
   }
 });
 
