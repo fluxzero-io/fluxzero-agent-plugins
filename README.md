@@ -242,6 +242,33 @@ server, or serves its own version before startup. Older servers without discover
 use their advertised tools and CLI help; pins are never changed for this fallback.
 Documentation alone opens no project server or watcher.
 
+### Reporting Fluxzero product issues
+
+When application work exposes a probable Fluxzero product defect or missing
+capability, rather than an application-specific bug, the plugin tells the agent
+to offer a public GitHub issue in the owning repository:
+
+- **SDK:** `https://github.com/fluxzero-io/fluxzero-sdk-java`
+- **CLI:** `https://github.com/fluxzero-io/fluxzero-cli`
+- **Agent plugin:** `https://github.com/fluxzero-io/fluxzero-agent-plugins`
+- **Dev Server and Devboard:** `https://github.com/fluxzero-io/fluxzero-dev-server`
+
+Direct reporting is limited to an already authenticated GitHub route, such as
+`gh` with valid authentication or an authenticated connector or browser
+session. The agent first searches for a matching open issue, prepares the exact
+title and body, shows that draft to the user, and obtains explicit user
+permission before any public write.
+It does not start a new login just to report an issue. Without authenticated
+access it leaves the user a sanitized draft and continues the requested work.
+
+Every draft is treated as public and uses generic placeholders plus the
+smallest synthetic reproduction. It may include relevant component versions,
+platform details, sanitized steps, and expected versus actual behavior, but not
+project or repository names, private code or configuration, raw logs, stack
+traces, traces, payloads, paths, environment values, identifiers, URLs, branch
+names, user or customer data, business details, credentials, or secrets. If a
+useful report would require that context, the agent must not publish it.
+
 For a new or empty workspace, complete a `get_status` call and confirm its
 `projectDirectory`. `dev-server-not-running` is a valid bootstrap status.
 Generate directly there with `fz init --in-place`; do not create and move a named child

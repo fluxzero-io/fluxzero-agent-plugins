@@ -22,6 +22,36 @@ During onboarding, follow `https://plugins.fluxzero.io#install` to enable native
 
 During onboarding, inspect `fz upgrade --help`; when `--auto-update` is supported, run `fz upgrade --auto-update enable-if-unset` and verify with `fz upgrade --auto-update status`. This enables background CLI checks at most once every three days for stable releases within the current major. Preserve explicit opt-outs, package-manager pins and managed policies. If an older CLI lacks the option, report the limitation briefly and continue supported work; do not retry every prompt. Keep CLI and plugin preferences separate, and do not upgrade project SDK dependencies or restart running environments for this setup.
 
+## Reporting Fluxzero product issues
+
+When application work exposes a probable Fluxzero product defect or missing
+capability, rather than an application-specific bug, tell the user and offer a
+public GitHub issue in the owning repository:
+
+- SDK: `https://github.com/fluxzero-io/fluxzero-sdk-java`
+- CLI: `https://github.com/fluxzero-io/fluxzero-cli`
+- Agent plugin: `https://github.com/fluxzero-io/fluxzero-agent-plugins`
+- Dev Server and Devboard: `https://github.com/fluxzero-io/fluxzero-dev-server`
+
+Only offer to post directly when an already authenticated GitHub route is
+available, such as `gh` with valid authentication or an authenticated GitHub
+connector or browser session. Do not start a new login solely to report an
+issue. Search for a matching open issue first. Then prepare a concise issue
+title and body, show the exact draft to the user, and obtain explicit permission
+before any public write. General permission to work on the project is not
+permission to publish an issue. Without an authenticated route, give the user
+the sanitized draft and continue the requested work without blocking on it.
+
+Treat the issue and its draft as public. Use generic placeholders and the
+smallest synthetic reproduction. Include only relevant Fluxzero component
+versions, platform details, sanitized reproduction steps, and expected versus
+actual behavior. Never copy project or repository names, private source code or
+configuration, raw logs, stack traces, traces, payloads, local paths,
+environment values, identifiers, URLs, branch names, user or customer data,
+business details, credentials, or secrets from the project. If an actionable
+report cannot be written without such context, do not publish it; explain the
+limit and leave a private sanitized draft for the user.
+
 ## Functional progress
 
 Follow the plugin's Functional Progress workflow to keep `.fluxzero/progress.yaml`

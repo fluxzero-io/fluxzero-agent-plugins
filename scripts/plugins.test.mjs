@@ -242,6 +242,33 @@ test("agent workflow keeps one writer per feature slice", async () => {
   }
 });
 
+test("agents offer privacy-safe GitHub issues only with authentication and permission", async () => {
+  const files = [
+    "README.md",
+    "skills/build-fluxzero-app/common.md",
+    "project-instructions/AGENTS.md",
+  ];
+  const repositories = [
+    "https://github.com/fluxzero-io/fluxzero-sdk-java",
+    "https://github.com/fluxzero-io/fluxzero-cli",
+    "https://github.com/fluxzero-io/fluxzero-agent-plugins",
+    "https://github.com/fluxzero-io/fluxzero-dev-server",
+  ];
+
+  for (const file of files) {
+    const content = await readFile(path.join(root, file), "utf8");
+    for (const repository of repositories) {
+      assert.ok(content.includes(repository), `${file} must route issues to ${repository}`);
+    }
+    assert.match(content, /already authenticated GitHub route/i);
+    assert.match(content, /show(?:s)? (?:that|the exact) draft|exact\s+title and body/i);
+    assert.match(content, /explicit\s+(?:user\s+)?permission/i);
+    assert.match(content, /smallest synthetic reproduction/i);
+    assert.match(content, /project or repository names/i);
+    assert.match(content, /do not (?:publish|start a new login)|must not publish/i);
+  }
+});
+
 test("all adapters start one local MCP without implicitly starting a project", async () => {
   const config = JSON.parse(await readFile(path.join(root, "plugins.config.json"), "utf8"));
   assert.deepEqual(config.devMcpArgs, ["mcp"]);
