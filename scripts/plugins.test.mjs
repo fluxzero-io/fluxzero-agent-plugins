@@ -263,15 +263,22 @@ test("agents offer privacy-safe GitHub issues only with authentication and permi
     assert.match(content, /already authenticated GitHub route/i);
     assert.match(content, /version-matched documentation/i);
     assert.match(content, /open and closed issues/i);
+    assert.match(content, /external search queries as\s+disclosures|query itself is a disclosure/i);
+    assert.match(content, /never project-derived text|sanitized\s+Fluxzero component terms/i);
     assert.match(content, /do(?:es)?\s+not\s+create a duplicate/i);
     assert.match(content, /show(?:s)?\s+(?:that|the exact sanitized)\s+draft|exact sanitized\s+title and body/i);
+    assert.match(content, /target repository/i);
+    assert.match(content, /publishing\s+account/i);
+    assert.match(content, /public visibility/i);
     assert.match(content, /explicit\s+(?:user\s+)?permission/i);
+    assert.match(content, /permission is declined|refusal is not revisited/i);
     assert.match(content, /smallest synthetic reproduction/i);
     assert.match(content, /manually rewritten,?\s+(?:a )?minimal error excerpt/i);
     assert.match(content, /project or repository\s+names/i);
     assert.match(content, /SECURITY\.md/);
     assert.match(content, /public issue or comment/i);
     assert.match(content, /private reporting route/i);
+    assert.match(content, /same\s+project-context exclusions and data minimization/i);
     assert.match(content, /do not publish|must not publish|never paste/i);
   }
 });
